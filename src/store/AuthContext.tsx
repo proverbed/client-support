@@ -1,12 +1,20 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from './../../config/Firebase';
+import { auth } from '../config/Firebase';
 
 const AuthContext = createContext({
-
+    googleSignIn: ()=>{}, 
+    logOut: ()=>{}, 
+    user: {
+        
+    }
 });
 
-export const AuthContextProvider = ({ children }) => {
+type Props = {
+    children?: React.ReactNode
+};
+
+export const AuthContextProvider: React.FC<Props> = ({ children }) => {
 
     const [user, setUser] = useState({});
 
