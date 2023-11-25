@@ -1,15 +1,5 @@
 // import { useState } from "react";
 
-export interface TradeProps {
-    id?: string,
-    ticket: string,
-    symbol: string,
-    type: string,
-    date: string,
-    volume: number,
-    profit: number,
-    entryPrice: number,
-}
 
 const Card = ({ ticket, symbol, type, volume, profit, entryPrice, date }: TradeProps) => {
 
