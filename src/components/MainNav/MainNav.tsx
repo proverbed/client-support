@@ -42,9 +42,6 @@ export default function MainNav() {
                 <li>
                   <NavLink to='/dashboard' className={({isActive}) => isActive ? "text-gray-900 inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" : "inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"}>Dashboard</NavLink>
                 </li>
-                <li>
-                  <NavLink to='/trade-details' className={({isActive}) => isActive ? "text-gray-900 inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2" : "inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"}>Trade Details</NavLink>
-                </li>
               </ul>
             </nav>
           </div>

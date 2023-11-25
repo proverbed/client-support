@@ -4,7 +4,6 @@ import TradeDetailsPage from "./pages/TradeDetailsPage";
 import DashboardPage from "./pages/DashboardPage";
 import RootLayout from "./pages/Root";
 import ErrorPage from "./pages/ErrorPage";
-import SignInPage from "./pages/SignInPage";
 import { AuthContextProvider } from "./store/AuthContext";
 import Protected from "./pages/Protected";
 
@@ -15,8 +14,8 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: '/', element: <HomePage /> },
+      { path: '/trade/:tradeId', element: <Protected><TradeDetailsPage /></Protected> },
       { path: '/dashboard', element: <Protected><DashboardPage /></Protected> },
-      { path: '/trade-details', element: <Protected><TradeDetailsPage /></Protected> }
     ]
   },
 ]);
