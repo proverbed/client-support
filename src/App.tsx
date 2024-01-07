@@ -15,6 +15,7 @@ import Calendar from "./pages/calendar/calendar";
 import Bar from "./pages/bar";
 import Line from "./pages/line";
 import Pie from "./pages/pie";
+import Dashboard from "./pages/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,14 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <Pie />
+          </Protected>
+        ),
+      },
+      {
+        path: "/dash",
+        element: (
+          <Protected>
+            <Dashboard />
           </Protected>
         ),
       },
