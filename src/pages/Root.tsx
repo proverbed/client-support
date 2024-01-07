@@ -3,7 +3,7 @@ import MainNav from "../components/MainNav/MainNav";
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./global/Topbar";
-import MySidebar from "./global/Sidebar";
+import Sidebar from "./global/Sidebar";
 
 function RootLayout() {
   const [theme, colorMode] = useMode();
@@ -14,7 +14,7 @@ function RootLayout() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div className="app">
-            <MySidebar />
+            <Sidebar />
 
             <main className="content">
               <MainNav />
