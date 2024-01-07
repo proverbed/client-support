@@ -1,17 +1,31 @@
 import { Outlet } from "react-router-dom";
 import MainNav from "../components/MainNav/MainNav";
-import classes from './Root.module.css';
+import { ColorModeContext, useMode } from "../theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import Topbar from "./global/Topbar";
+import MySidebar from "./global/Sidebar";
 
 function RootLayout() {
-    return (
-        <>
-            <MainNav />
-            <main className={classes.content}>
-            <Outlet />
+  const [theme, colorMode] = useMode();
+
+  return (
+    <>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div className="app">
+            <MySidebar />
+
+            <main className="content">
+              <MainNav />
+              <Topbar />
+              <Outlet />
             </main>
-            
-        </>
-    )
+          </div>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </>
+  );
 }
 
 export default RootLayout;
