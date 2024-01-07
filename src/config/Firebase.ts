@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
@@ -16,7 +16,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
@@ -29,4 +28,9 @@ export const signInWithGoogle = () => {
     });
 };
 
-export const db = getFirestore(app);
+const db = getFirestore(app)
+
+// Uncomment the below line, in order to point to production
+connectFirestoreEmulator(db, '127.0.0.1', 8080);
+
+export { db };
