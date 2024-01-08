@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Button, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
@@ -37,13 +37,18 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 
 const Sidebar = () => {
   const theme = useTheme();
-  const { user } = UserAuth();
+  const { user, logOut } = UserAuth();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
-  console.log(user);
-
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -215,6 +220,16 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
           </Box>
+
+          {!isCollapsed && (
+            <Box mt="20px">
+              <Box textAlign="center">
+                <Button type="submit" color="secondary" variant="outlined" onClick={handleSignOut}>
+                  Logout
+                </Button>
+              </Box>
+            </Box>
+          )}
         </Menu>
       </ProSidebar>
     </Box>

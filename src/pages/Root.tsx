@@ -19,7 +19,6 @@ function RootLayout() {
             {user?.displayName ? <Sidebar /> : null}
 
             <main className="content">
-              <MainNav />
               {user?.displayName ? <Topbar /> : null}
 
               <Outlet />
