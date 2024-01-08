@@ -6,7 +6,7 @@ import RootLayout from "./pages/Root";
 import ErrorPage from "./pages/ErrorPage";
 import { AuthContextProvider } from "./store/AuthContext";
 import Protected from "./pages/Protected";
-import Team from "./pages/team";
+import Account from "./pages/account";
 import Invoices from "./pages/invoices";
 import Contacts from "./pages/contacts";
 import FAQ from "./pages/faq";
@@ -45,10 +45,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/team",
+        path: "/account",
         element: (
           <Protected>
-            <Team />
+            <Account />
           </Protected>
         ),
       },
