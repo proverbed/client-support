@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TradeDetailsPage from "./pages/TradeDetailsPage";
-import DashboardPage from "./pages/DashboardPage";
 import RootLayout from "./pages/Root";
 import ErrorPage from "./pages/ErrorPage";
 import { AuthContextProvider } from "./store/AuthContext";
@@ -16,6 +15,7 @@ import Bar from "./pages/bar";
 import Line from "./pages/line";
 import Pie from "./pages/pie";
 import Dashboard from "./pages/dashboard";
+import NumTrades from "./pages/numTrades";
 
 const router = createBrowserRouter([
   {
@@ -33,14 +33,6 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <TradeDetailsPage />
-          </Protected>
-        ),
-      },
-      {
-        path: "/dashboard",
-        element: (
-          <Protected>
-            <DashboardPage />
           </Protected>
         ),
       },
@@ -105,6 +97,14 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <Line />
+          </Protected>
+        ),
+      },
+      {
+        path: "/numTrades",
+        element: (
+          <Protected>
+            <NumTrades />
           </Protected>
         ),
       },

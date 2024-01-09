@@ -6,6 +6,13 @@ import { db } from "../../config/Firebase";
 import { useEffect, useState } from "react";
 import { getDocs, collection } from "firebase/firestore";
 
+export interface AccountProps {
+  id?: string;
+  name: string;
+  size: number;
+  magic: string;
+}
+
 const Account = () => {
   const theme = useTheme();
 
@@ -17,7 +24,8 @@ const Account = () => {
       setAccounts(
         querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
       );
-      console.log(accounts);
+
+      console.log(`get accounts: `, accounts);
     } catch (err) {
       console.error(err);
     }
@@ -25,6 +33,7 @@ const Account = () => {
 
   useEffect(() => {
     getAccountList();
+    console.log(`accounts: `, accounts);
   }, []);
 
   const colors = tokens(theme.palette.mode);

@@ -162,6 +162,14 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
+            <Item
+              title="Number of Trades"
+              to="/numTrades"
+              icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -180,13 +188,6 @@ const Sidebar = () => {
               title="Calendar"
               to="/calendar"
               icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="FAQ Page"
-              to="/faq"
-              icon={<HelpOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -224,7 +225,12 @@ const Sidebar = () => {
           {!isCollapsed && (
             <Box mt="20px">
               <Box textAlign="center">
-                <Button type="submit" color="secondary" variant="outlined" onClick={handleSignOut}>
+                <Button
+                  type="submit"
+                  color="secondary"
+                  variant="outlined"
+                  onClick={handleSignOut}
+                >
                   Logout
                 </Button>
               </Box>
