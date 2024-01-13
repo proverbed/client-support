@@ -2,7 +2,7 @@ import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
+import NumbersIcon from "@mui/icons-material/Numbers";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
@@ -11,10 +11,84 @@ import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import { query, where } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { db } from "../../config/Firebase";
+import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
+
+export interface NumTradesProps {
+  id?: string;
+  date: string;
+  numberTrades: number;
+}
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [numTrades, setNumTrades] = useState<number>(0);
+
+  const getNumberOfTrades = async () => {
+    try {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+
+      const q = query(
+        collection(db, "accounts/undefined/numTrades"),
+        where("date", ">=", startOfToday),
+        where("date", "<=", endOfToday)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setNumTrades(querySnapshot.docs[0].data().numberTrades);
+        const path = "accounts/undefined/numTrades/" + querySnapshot.docs[0].id;
+        return path;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    let pathVar;
+    // let unsubscribe;
+    const pathResult = (async () => {
+      pathVar = await getNumberOfTrades();
+      return pathVar;
+    })();
+
+    let observer;
+    pathResult.then((value) => {
+      if (value !== undefined) {
+        observer = onSnapshot(
+          doc(db, value),
+          (querySnapshot) => {
+            console.log(
+              `Received query snapshot of size ${JSON.stringify(
+                querySnapshot.data(),
+                null,
+                2
+              )}`
+            );
+            setNumTrades(querySnapshot.data().numberTrades);
+          },
+          (err) => {
+            console.log(`Encountered error: ${err}`);
+          }
+        );
+      }
+    });
+
+    return () => {
+      if (observer !== undefined) {
+        observer();
+      }
+    };
+  }, []);
 
   return (
     <Box m="20px">
@@ -54,12 +128,14 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
+            title={numTrades}
+            subtitle="Number of Trades Today"
             progress="0.75"
             increase="+14%"
+            displayIncrease={false}
+            displayProgress={false}
             icon={
-              <EmailIcon
+              <NumbersIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
