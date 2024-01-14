@@ -4,14 +4,15 @@ import { query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
-import NumbersIcon from "@mui/icons-material/Numbers";
+import BalanceIcon from "@mui/icons-material/Balance";
 import StatBox from "./StatBox";
 
-const NumberTradesToday = () => {
+const TradeBalanceToday = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [numTrades, setNumTrades] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0);
+  const DAILY_BALANCE = "dailyBalance";
 
   const getNumberOfTrades = async () => {
     try {
@@ -21,7 +22,7 @@ const NumberTradesToday = () => {
       endOfToday.setHours(23, 59, 59, 999);
 
       const q = query(
-        collection(db, "accounts/undefined/numTrades"),
+        collection(db, `accounts/undefined/${DAILY_BALANCE}`),
         where("date", ">=", startOfToday),
         where("date", "<=", endOfToday)
       );
@@ -29,8 +30,9 @@ const NumberTradesToday = () => {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        setNumTrades(querySnapshot.docs[0].data().numberTrades);
-        const path = "accounts/undefined/numTrades/" + querySnapshot.docs[0].id;
+        setBalance(querySnapshot.docs[0].data().dailyBalance);
+        const path =
+          `accounts/undefined/${DAILY_BALANCE}/` + querySnapshot.docs[0].id;
         return path;
       }
     } catch (err) {
@@ -59,7 +61,7 @@ const NumberTradesToday = () => {
                 2
               )}`
             );
-            setNumTrades(querySnapshot.data().numberTrades);
+            setBalance(querySnapshot.data().dailyBalance);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
@@ -84,14 +86,14 @@ const NumberTradesToday = () => {
       justifyContent="center"
     >
       <StatBox
-        title={numTrades}
-        subtitle="Number of Trades Today"
+        title={"$" + balance}
+        subtitle="Trade balance for Today"
         progress="0.75"
         increase="+14%"
         displayIncrease={false}
         displayProgress={false}
         icon={
-          <NumbersIcon
+          <BalanceIcon
             sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
           />
         }
@@ -100,4 +102,4 @@ const NumberTradesToday = () => {
   );
 };
 
-export default NumberTradesToday;
+export default TradeBalanceToday;
