@@ -20,10 +20,13 @@ const Account = () => {
   const getAccountList = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "accounts"));
+      // @ts-expect-error avoid this eror
       // @ts-ignore
-      setAccounts(
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
+      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAccounts(accountData);
 
       console.log(`get accounts: `, accounts);
     } catch (err) {
@@ -37,13 +40,15 @@ const Account = () => {
   }, []);
 
   const colors = tokens(theme.palette.mode);
-  const columns = [
-    { field: "id", headerName: "ID" },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const columns: any = [
+    { field: "id", headerName: "ID", align: "left" },
     {
       field: "name",
       headerName: "Name",
       flex: 1,
       cellClassName: "name-column--cell",
+      align: "left",
     },
     {
       field: "magic",

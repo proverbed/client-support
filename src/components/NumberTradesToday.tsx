@@ -46,7 +46,8 @@ const NumberTradesToday = () => {
       return pathVar;
     })();
 
-    let observer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let observer: any;
     pathResult.then((value) => {
       if (value !== undefined) {
         observer = onSnapshot(
@@ -59,7 +60,7 @@ const NumberTradesToday = () => {
                 2
               )}`
             );
-            setNumTrades(querySnapshot.data().numberTrades);
+            setNumTrades(querySnapshot.data()?.numberTrades);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
@@ -78,15 +79,15 @@ const NumberTradesToday = () => {
   return (
     <Box
       gridColumn="span 3"
-      backgroundColor={colors.primary[400]}
+      sx={{ bgcolor: colors.primary[400] }}
       display="flex"
       alignItems="center"
       justifyContent="center"
     >
       <StatBox
-        title={numTrades}
+        title={String(numTrades)}
         subtitle="Number of Trades Today"
-        progress="0.75"
+        progress={0.75}
         increase="+14%"
         displayIncrease={false}
         displayProgress={false}

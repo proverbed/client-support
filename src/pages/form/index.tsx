@@ -1,5 +1,5 @@
 import { Box, Button, TextField } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
@@ -7,8 +7,25 @@ import Header from "../../components/Header";
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = (
+    values: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      contact: string;
+      address1: string;
+      address2: string;
+    },
+    formikHelpers: FormikHelpers<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      contact: string;
+      address1: string;
+      address2: string;
+    }>
+  ) => {
+    console.log(values, formikHelpers);
   };
 
   return (

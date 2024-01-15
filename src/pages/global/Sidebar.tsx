@@ -16,7 +16,15 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { UserAuth } from "../../store/AuthContext";
 
-const Item = ({ title, to, icon, selected, setSelected }) => {
+type Props = {
+  title: string;
+  to: string;
+  icon: JSX.Element;
+  selected: string;
+  setSelected: (title: string) => void;
+};
+
+const Item: React.FC<Props> = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -156,14 +164,6 @@ const Sidebar = () => {
             <Item
               title="Invoices Balances"
               to="/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Number of Trades"
-              to="/numTrades"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

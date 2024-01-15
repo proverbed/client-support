@@ -15,7 +15,6 @@ import Bar from "./pages/bar";
 import Line from "./pages/line";
 import Pie from "./pages/pie";
 import Dashboard from "./pages/dashboard";
-import NumTrades from "./pages/numTrades";
 
 const router = createBrowserRouter([
   {
@@ -97,14 +96,6 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <Line />
-          </Protected>
-        ),
-      },
-      {
-        path: "/numTrades",
-        element: (
-          <Protected>
-            <NumTrades />
           </Protected>
         ),
       },

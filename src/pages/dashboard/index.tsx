@@ -56,7 +56,7 @@ const Dashboard = () => {
         <TradeBalanceToday />
         <Box
           gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -64,7 +64,7 @@ const Dashboard = () => {
           <StatBox
             title="32,441"
             subtitle="New Clients"
-            progress="0.30"
+            progress={0.3}
             increase="+5%"
             icon={
               <PersonAddIcon
@@ -75,7 +75,7 @@ const Dashboard = () => {
         </Box>
         <Box
           gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -83,7 +83,7 @@ const Dashboard = () => {
           <StatBox
             title="1,325,134"
             subtitle="Traffic Received"
-            progress="0.80"
+            progress={0.8}
             increase="+43%"
             icon={
               <TrafficIcon
@@ -97,7 +97,7 @@ const Dashboard = () => {
         <Box
           gridColumn="span 8"
           gridRow="span 2"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
         >
           <Box
             mt="25px"
@@ -137,7 +137,7 @@ const Dashboard = () => {
         <Box
           gridColumn="span 4"
           gridRow="span 2"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
           overflow="auto"
         >
           <Box
@@ -145,7 +145,6 @@ const Dashboard = () => {
             justifyContent="space-between"
             alignItems="center"
             borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
@@ -175,7 +174,7 @@ const Dashboard = () => {
               </Box>
               <Box color={colors.grey[100]}>{transaction.date}</Box>
               <Box
-                backgroundColor={colors.greenAccent[500]}
+                sx={{ bgcolor: colors.greenAccent[500] }}
                 p="5px 10px"
                 borderRadius="4px"
               >
@@ -189,7 +188,7 @@ const Dashboard = () => {
         <Box
           gridColumn="span 4"
           gridRow="span 2"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
           p="30px"
         >
           <Typography variant="h5" fontWeight="600">
@@ -201,7 +200,7 @@ const Dashboard = () => {
             alignItems="center"
             mt="25px"
           >
-            <ProgressCircle size="125" />
+            <ProgressCircle size={125} />
             <Typography
               variant="h5"
               color={colors.greenAccent[500]}
@@ -215,7 +214,7 @@ const Dashboard = () => {
         <Box
           gridColumn="span 4"
           gridRow="span 2"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
         >
           <Typography
             variant="h5"

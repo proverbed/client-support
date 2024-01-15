@@ -3,7 +3,15 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { mockLineData as data } from "../data/mockData";
 
-const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
+type Props = {
+  isDashboard?: boolean;
+  isCustomLineColors?: boolean;
+};
+
+const LineChart: React.FC<Props> = ({
+  isCustomLineColors = false,
+  isDashboard = false,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 

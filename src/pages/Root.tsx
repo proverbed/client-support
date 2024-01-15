@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import MainNav from "../components/MainNav/MainNav";
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./global/Topbar";

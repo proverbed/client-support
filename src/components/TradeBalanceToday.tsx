@@ -48,7 +48,8 @@ const TradeBalanceToday = () => {
       return pathVar;
     })();
 
-    let observer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let observer: any;
     pathResult.then((value) => {
       if (value !== undefined) {
         observer = onSnapshot(
@@ -61,7 +62,7 @@ const TradeBalanceToday = () => {
                 2
               )}`
             );
-            setBalance(querySnapshot.data().dailyBalance);
+            setBalance(querySnapshot.data()?.dailyBalance);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
@@ -80,7 +81,7 @@ const TradeBalanceToday = () => {
   return (
     <Box
       gridColumn="span 3"
-      backgroundColor={colors.primary[400]}
+      sx={{ bgcolor: colors.primary[400] }}
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -88,7 +89,7 @@ const TradeBalanceToday = () => {
       <StatBox
         title={"$" + balance}
         subtitle="Trade balance for Today"
-        progress="0.75"
+        progress={0.75}
         increase="+14%"
         displayIncrease={false}
         displayProgress={false}

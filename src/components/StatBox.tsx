@@ -2,7 +2,17 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import ProgressCircle from "./ProgressCircle";
 
-const StatBox = ({
+type Props = {
+  title: string;
+  subtitle: string;
+  icon: JSX.Element;
+  progress: number;
+  increase: string;
+  displayProgress?: boolean;
+  displayIncrease?: boolean;
+};
+
+const StatBox: React.FC<Props> = ({
   title,
   subtitle,
   icon,

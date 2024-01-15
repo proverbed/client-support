@@ -55,7 +55,7 @@ const Calendar = () => {
         {/* CALENDAR SIDEBAR */}
         <Box
           flex="1 1 20%"
-          backgroundColor={colors.primary[400]}
+          sx={{ bgcolor: colors.primary[400] }}
           p="15px"
           borderRadius="4px"
         >
