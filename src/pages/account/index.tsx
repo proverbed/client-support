@@ -21,7 +21,6 @@ const Account = () => {
     try {
       const querySnapshot = await getDocs(collection(db, "accounts"));
       // @ts-expect-error avoid this eror
-      // @ts-ignore
       const accountData: AccountProps[] = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),

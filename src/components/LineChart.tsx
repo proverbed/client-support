@@ -5,13 +5,9 @@ import { mockLineData as data } from "../data/mockData";
 
 type Props = {
   isDashboard?: boolean;
-  isCustomLineColors?: boolean;
 };
 
-const LineChart: React.FC<Props> = ({
-  isCustomLineColors = false,
-  isDashboard = false,
-}) => {
+const LineChart: React.FC<Props> = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -66,7 +62,6 @@ const LineChart: React.FC<Props> = ({
       axisTop={null}
       axisRight={null}
       axisBottom={{
-        orient: "bottom",
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
@@ -75,7 +70,6 @@ const LineChart: React.FC<Props> = ({
         legendPosition: "middle",
       }}
       axisLeft={{
-        orient: "left",
         tickValues: 5, // added
         tickSize: 3,
         tickPadding: 5,
