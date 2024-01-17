@@ -6,6 +6,7 @@ import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
 import BalanceIcon from "@mui/icons-material/Balance";
 import StatBox from "./StatBox";
+import { configSettings } from "../config/config";
 
 const TradeBalanceToday = () => {
   const theme = useTheme();
@@ -13,6 +14,9 @@ const TradeBalanceToday = () => {
 
   const [balance, setBalance] = useState<number>(0);
   const DAILY_BALANCE = "dailyBalance";
+
+  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
+  const accountId = configSettings["trade-balance-today"][myEnv].accountId;
 
   const getNumberOfTrades = async () => {
     try {
@@ -22,7 +26,7 @@ const TradeBalanceToday = () => {
       endOfToday.setHours(23, 59, 59, 999);
 
       const q = query(
-        collection(db, `accounts/undefined/${DAILY_BALANCE}`),
+        collection(db, `accounts/${accountId}/${DAILY_BALANCE}`),
         where("date", ">=", startOfToday),
         where("date", "<=", endOfToday)
       );
@@ -32,7 +36,7 @@ const TradeBalanceToday = () => {
       if (!querySnapshot.empty) {
         setBalance(querySnapshot.docs[0].data().dailyBalance);
         const path =
-          `accounts/undefined/${DAILY_BALANCE}/` + querySnapshot.docs[0].id;
+          `accounts/${accountId}/${DAILY_BALANCE}/` + querySnapshot.docs[0].id;
         return path;
       }
     } catch (err) {

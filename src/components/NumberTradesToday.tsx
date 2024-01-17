@@ -6,12 +6,16 @@ import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import StatBox from "./StatBox";
+import { configSettings } from "../config/config";
 
 const NumberTradesToday = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [numTrades, setNumTrades] = useState<number>(0);
+
+  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
+  const accountId = configSettings["num-trades-today"][myEnv].accountId;
 
   const getNumberOfTrades = async () => {
     try {
@@ -21,7 +25,7 @@ const NumberTradesToday = () => {
       endOfToday.setHours(23, 59, 59, 999);
 
       const q = query(
-        collection(db, "accounts/undefined/numTrades"),
+        collection(db, `accounts/${accountId}/numTrades`),
         where("date", ">=", startOfToday),
         where("date", "<=", endOfToday)
       );
@@ -30,8 +34,7 @@ const NumberTradesToday = () => {
 
       if (!querySnapshot.empty) {
         setNumTrades(querySnapshot.docs[0].data().numberTrades);
-        const path = "accounts/undefined/numTrades/" + querySnapshot.docs[0].id;
-        return path;
+        return `accounts/${accountId}/numTrades/${querySnapshot.docs[0].id}`;
       }
     } catch (err) {
       console.error(err);
