@@ -13,7 +13,11 @@ export interface ViolationProps {
     nanoseconds: number;
   };
   type: string;
-  ticket: string;
+  ticket?: string;
+  numberTrades?: number;
+  risk?: number;
+  riskPerTrade?: number;
+  ticketList?: string;
 }
 
 const ViolationTodayList = () => {
@@ -151,6 +155,16 @@ const ViolationTodayList = () => {
               {violation.id?.substring(0, 5)}
             </Typography>
             <Typography color={colors.grey[100]}>{violation.ticket}</Typography>
+            {violation.risk && (
+              <Typography
+                color={colors.grey[100]}
+              >{`${violation.risk}:${violation.riskPerTrade}`}</Typography>
+            )}
+            {violation.ticketList && (
+              <Typography
+                color={colors.grey[100]}
+              >{`${violation.ticketList}`}</Typography>
+            )}
           </Box>
           <Box color={colors.grey[100]}>
             {new Date(violation.date.seconds * 1000).toDateString()}
