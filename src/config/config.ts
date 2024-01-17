@@ -18,5 +18,15 @@ export const configSettings = {
       name: "trade balance today - config",
       accountId: "g3UbrEWXUvKCGKqvZ2CC",
     },
+  },
+  "violation-today": {
+    prod: {
+      name: "trade balance today - config",
+      accountId: "UZNaAh7Eebc5sZ8yTWn3",
+    },
+    dev: {
+      name: "trade balance today - config",
+      accountId: "g3UbrEWXUvKCGKqvZ2CC",
+    },
   }
 };
