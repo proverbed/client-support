@@ -29,7 +29,8 @@ export const signInWithGoogle = () => {
 
 const db = getFirestore(app)
 
-// Uncomment the below line, in order to point to production
-connectFirestoreEmulator(db, '127.0.0.1', 8080);
+if (!import.meta.env.PROD) {
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+}
 
 export { db };

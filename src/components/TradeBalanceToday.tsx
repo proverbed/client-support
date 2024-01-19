@@ -6,17 +6,17 @@ import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
 import BalanceIcon from "@mui/icons-material/Balance";
 import StatBox from "./StatBox";
-import { configSettings } from "../config/config";
 
-const TradeBalanceToday = () => {
+type Props = {
+  accountId: string;
+};
+
+const TradeBalanceToday: React.FC<Props> = ({ accountId }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [balance, setBalance] = useState<number>(0);
   const DAILY_BALANCE = "dailyBalance";
-
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const accountId = configSettings["trade-balance-today"][myEnv].accountId;
 
   const getNumberOfTrades = async () => {
     try {

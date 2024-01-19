@@ -11,7 +11,7 @@ import NumberTradesToday from "../../components/NumberTradesToday";
 import TradeBalanceToday from "../../components/TradeBalanceToday";
 import ViolationToday from "../../components/ViolationToday";
 import ViolationTodayList from "../../components/ViolationTodayList";
-import { configSettings } from "../../config/config";
+import { useParams } from "react-router-dom";
 
 export interface NumTradesProps {
   id?: string;
@@ -19,17 +19,14 @@ export interface NumTradesProps {
   numberTrades: number;
 }
 
-const Dashboard = () => {
+const AccountDashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { accountId } = useParams<{
+    accountId: string;
+  }>();
 
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const numTradesAccountId =
-    configSettings["num-trades-today"][myEnv].accountId;
-  const tradeBalancecAccountId =
-    configSettings["trade-balance-today"][myEnv].accountId;
-  const violationTodayAccountId =
-    configSettings["violation-today"][myEnv].accountId;
+  const myAccountId = accountId !== undefined ? accountId : "";
 
   return (
     <Box m="20px">
@@ -61,9 +58,9 @@ const Dashboard = () => {
         gap="20px"
       >
         {/* ROW 1 */}
-        <NumberTradesToday accountId={numTradesAccountId} />
-        <TradeBalanceToday accountId={tradeBalancecAccountId} />
-        <ViolationToday accountId={violationTodayAccountId} />
+        <NumberTradesToday accountId={myAccountId} />
+        <TradeBalanceToday accountId={myAccountId} />
+        <ViolationToday accountId={myAccountId} />
         <Box
           gridColumn="span 3"
           sx={{ bgcolor: colors.primary[400] }}
@@ -131,7 +128,7 @@ const Dashboard = () => {
           sx={{ bgcolor: colors.primary[400] }}
           overflow="auto"
         >
-          <ViolationTodayList accountId={violationTodayAccountId} />
+          <ViolationTodayList accountId={myAccountId} />
         </Box>
 
         {/* ROW 3 */}
@@ -182,4 +179,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AccountDashboard;

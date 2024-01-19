@@ -4,7 +4,6 @@ import { query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot } from "firebase/firestore";
-import { configSettings } from "../config/config";
 
 export interface ViolationProps {
   id?: string;
@@ -20,15 +19,16 @@ export interface ViolationProps {
   ticketList?: string;
 }
 
-const ViolationTodayList = () => {
+type Props = {
+  accountId: string;
+};
+
+const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [violation, setViolation] = useState<ViolationProps[]>([]);
   const VIOLATION = "violation";
-
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const accountId = configSettings["violation-today"][myEnv].accountId;
 
   const getNumberOfViolations = async () => {
     try {

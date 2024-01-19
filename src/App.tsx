@@ -15,6 +15,7 @@ import Bar from "./pages/bar";
 import Line from "./pages/line";
 import Pie from "./pages/pie";
 import Dashboard from "./pages/dashboard";
+import AccountDashboard from "./pages/accountDashboard";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,14 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <TradeDetailsPage />
+          </Protected>
+        ),
+      },
+      {
+        path: "/dashboard/:accountId",
+        element: (
+          <Protected>
+            <AccountDashboard />
           </Protected>
         ),
       },

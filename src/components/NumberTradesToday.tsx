@@ -6,16 +6,16 @@ import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import StatBox from "./StatBox";
-import { configSettings } from "../config/config";
 
-const NumberTradesToday = () => {
+type Props = {
+  accountId: string;
+};
+
+const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [numTrades, setNumTrades] = useState<number>(0);
-
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const accountId = configSettings["num-trades-today"][myEnv].accountId;
 
   const getNumberOfTrades = async () => {
     try {

@@ -6,17 +6,17 @@ import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import ReportOffIcon from "@mui/icons-material/ReportOff";
 import StatBox from "./StatBox";
-import { configSettings } from "../config/config";
 
-const ViolationToday = () => {
+type Props = {
+  accountId: string;
+};
+
+const ViolationToday: React.FC<Props> = ({ accountId }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [violation, setViolation] = useState<number>(0);
   const VIOLATION = "violation";
-
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const accountId = configSettings["violation-today"][myEnv].accountId;
 
   const getNumberOfViolations = async () => {
     try {

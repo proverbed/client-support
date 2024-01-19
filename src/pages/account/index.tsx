@@ -21,13 +21,16 @@ const Account = () => {
     try {
       const querySnapshot = await getDocs(collection(db, "accounts"));
       // @ts-expect-error avoid this eror
-      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => {
+        console.log(doc.id);
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
       setAccounts(accountData);
 
-      console.log(`get accounts: `, accounts);
+      console.log(`get accounts: `, accountData);
     } catch (err) {
       console.error(err);
     }
@@ -35,7 +38,6 @@ const Account = () => {
 
   useEffect(() => {
     getAccountList();
-    console.log(`accounts: `, accounts);
   }, []);
 
   const colors = tokens(theme.palette.mode);

@@ -2,7 +2,7 @@ export const configSettings = {
   "num-trades-today": {
     prod: {
       name: "number of trades screen - config",
-      accountId: "UZNaAh7Eebc5sZ8yTWn3",
+      accountId: "iw90LlGIROsoIPPsiPlS",
     },
     dev: {
       name: "number of trades screen - config",
@@ -12,7 +12,7 @@ export const configSettings = {
   "trade-balance-today": {
     prod: {
       name: "trade balance today - config",
-      accountId: "UZNaAh7Eebc5sZ8yTWn3",
+      accountId: "iw90LlGIROsoIPPsiPlS",
     },
     dev: {
       name: "trade balance today - config",
@@ -22,7 +22,7 @@ export const configSettings = {
   "violation-today": {
     prod: {
       name: "trade balance today - config",
-      accountId: "UZNaAh7Eebc5sZ8yTWn3",
+      accountId: "iw90LlGIROsoIPPsiPlS",
     },
     dev: {
       name: "trade balance today - config",
