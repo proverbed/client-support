@@ -4,8 +4,7 @@ import { query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
-import NumbersIcon from "@mui/icons-material/Numbers";
-import StatBox from "./StatBox";
+import StatsBox from "./StatsBox";
 
 type Props = {
   accountId: string;
@@ -81,25 +80,13 @@ const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
 
   return (
     <Box
-      gridColumn="span 3"
+      gridColumn="span 2"
       sx={{ bgcolor: colors.primary[400] }}
       display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      <StatBox
-        title={String(numTrades)}
-        subtitle="Number of Trades Today"
-        progress={0.75}
-        increase="+14%"
-        displayIncrease={false}
-        displayProgress={false}
-        icon={
-          <NumbersIcon
-            sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-          />
-        }
-      />
+      <StatsBox title={String(numTrades)} subtitle="Total Trades" />
     </Box>
   );
 };

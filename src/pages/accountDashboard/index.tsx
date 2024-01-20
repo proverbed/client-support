@@ -1,17 +1,17 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
-import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
 import NumberTradesToday from "../../components/NumberTradesToday";
 import TradeBalanceToday from "../../components/TradeBalanceToday";
 import ViolationToday from "../../components/ViolationToday";
 import ViolationTodayList from "../../components/ViolationTodayList";
 import { useParams } from "react-router-dom";
+import WinRate from "../../components/WinRate";
+import WinsLosses from "../../components/WinsLosses";
 
 export interface NumTradesProps {
   id?: string;
@@ -33,21 +33,6 @@ const AccountDashboard = () => {
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-
-        <Box>
-          <Button
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
-        </Box>
       </Box>
 
       {/* GRID & CHARTS */}
@@ -58,28 +43,12 @@ const AccountDashboard = () => {
         gap="20px"
       >
         {/* ROW 1 */}
+
+        <WinRate accountId={myAccountId} />
+        <WinsLosses accountId={myAccountId} />
         <NumberTradesToday accountId={myAccountId} />
         <TradeBalanceToday accountId={myAccountId} />
         <ViolationToday accountId={myAccountId} />
-        <Box
-          gridColumn="span 3"
-          sx={{ bgcolor: colors.primary[400] }}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress={0.8}
-            increase="+43%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
 
         {/* ROW 2 */}
         <Box
