@@ -1,10 +1,12 @@
-import { Box, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, useTheme, Button, Stack } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { db } from "../../config/Firebase";
 import { useEffect, useState } from "react";
 import { getDocs, collection } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 export interface AccountProps {
   id?: string;
@@ -18,6 +20,7 @@ export interface AccountProps {
 
 const Account = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [accounts, setAccounts] = useState<AccountProps[]>([]);
   const getAccountList = async () => {
@@ -45,7 +48,7 @@ const Account = () => {
 
   const colors = tokens(theme.palette.mode);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const columns: any = [
+  const columns: GridColDef[] = [
     { field: "id", headerName: "ID", align: "left" },
     {
       field: "name",
@@ -89,6 +92,30 @@ const Account = () => {
       type: "number",
       headerAlign: "left",
       align: "left",
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      sortable: false,
+      renderCell: (params) => {
+        const onClick = () => {
+          const currentRow = params.row.id;
+          navigate(`/dashboard/${currentRow}`);
+        };
+
+        return (
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={onClick}
+            >
+              Dashboard
+            </Button>
+          </Stack>
+        );
+      },
     },
   ];
 
