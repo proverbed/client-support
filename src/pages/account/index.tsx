@@ -11,6 +11,9 @@ export interface AccountProps {
   name: string;
   size: number;
   magic: string;
+  drawdownLimit: number;
+  profitTarget: number;
+  riskPerTrade: number;
 }
 
 const Account = () => {
@@ -59,6 +62,28 @@ const Account = () => {
       align: "left",
     },
     {
+      field: "drawdownLimit",
+      headerName: "Drawdown Limit",
+      type: "string",
+      headerAlign: "left",
+      align: "left",
+    },
+    {
+      field: "profitTarget",
+      headerName: "Profit Target",
+      type: "string",
+      headerAlign: "left",
+      align: "left",
+    },
+    {
+      field: "riskPerTrade",
+      headerName: "Risk Per Trade",
+      type: "string",
+      headerAlign: "left",
+      align: "left",
+      editable: true,
+    },
+    {
       field: "size",
       headerName: "Size",
       type: "number",
@@ -99,7 +124,7 @@ const Account = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={accounts} columns={columns} />
+        <DataGrid rows={accounts} columns={columns} />
       </Box>
     </Box>
   );
