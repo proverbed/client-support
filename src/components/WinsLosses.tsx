@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { db } from "../config/Firebase";
 import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import StatsBox from "./StatsBox";
+import { defaultValue } from "../helperFunctions/defaultValue";
 
 export interface TradesProps {
   id?: string;
@@ -55,6 +56,8 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
 
         setWinslosses(winRate(tradeData));
         return `accounts/${accountId}/${TRADES}`;
+      } else {
+        setWinslosses([0, 0]);
       }
     } catch (err) {
       console.error(err);
@@ -71,7 +74,7 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
       }
     });
 
-    return [count, total - count];
+    return [defaultValue(count, 0), defaultValue(total - count, 0)];
   };
 
   useEffect(() => {
@@ -121,7 +124,8 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
         observer();
       }
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId]);
 
   return (
     <>
