@@ -1,14 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, useTheme, Button, Stack } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  GridRowsProp,
+  GridRowModesModel,
+  GridRowModes,
+  DataGrid,
+  GridColDef,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridEventListener,
+  GridRowId,
+  GridRowModel,
+  GridRowEditStopReasons,
+} from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { db } from "../../config/Firebase";
 import { useEffect, useState } from "react";
-import { getDocs, collection } from "firebase/firestore";
+import {
+  getDoc,
+  getDocs,
+  collection,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import { randomId } from "@mui/x-data-grid-generator";
 
 export interface AccountProps {
+  isNew: boolean;
   id?: string;
   name: string;
   size: number;
@@ -18,25 +44,111 @@ export interface AccountProps {
   riskPerTrade: number;
 }
 
+interface EditToolbarProps {
+  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
+  setRowModesModel: (
+    newModel: (oldModel: GridRowModesModel) => GridRowModesModel
+  ) => void;
+}
+
 const Account = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const [accounts, setAccounts] = useState<AccountProps[]>([]);
+  const [rows, setRows] = useState<GridRowsProp[]>([]);
+
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  // const handleDeleteClick = (id: GridRowId) => () => {
+  //   // @ts-expect-error avoid this eror
+  //   const myFilteredItem = rows.filter((row) => row.id !== id);
+
+  //   setRows(myFilteredItem);
+  // };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    // @ts-expect-error avoid this eror
+    const editedRow = rows.find((row) => row.id === id);
+
+    // @ts-expect-error avoid this eror
+    if (editedRow!.isNew) {
+      // @ts-expect-error avoid this eror
+      const myFilteredItem = rows.filter((row) => row.id !== id);
+
+      setRows(myFilteredItem);
+    }
+  };
+
+  const processRowUpdate = async (newRow: GridRowModel) => {
+    const updatedRow = { ...newRow, isNew: false };
+
+    const updateData = {
+      ...newRow,
+    };
+    delete updateData.id;
+    delete updateData.isNew;
+
+    try {
+      let accountPath = `accounts/${newRow.id}`;
+      const docSnap = await getDoc(doc(db, accountPath));
+
+      if (docSnap.exists()) {
+        await updateDoc(doc(db, accountPath), updateData);
+      } else {
+        // add it
+        await setDoc(doc(db, accountPath), updateData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    // @ts-expect-error avoid this eror
+    const myRows = rows.map((row) => (row.id === newRow.id ? updatedRow : row));
+
+    // @ts-expect-error avoid this eror
+    setRows(myRows);
+
+    return updatedRow;
+  };
+
+  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
   const getAccountList = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "accounts"));
       // @ts-expect-error avoid this eror
       const accountData: AccountProps[] = querySnapshot.docs.map((doc) => {
-        console.log(doc.id);
         return {
           id: doc.id,
           ...doc.data(),
         };
       });
-      setAccounts(accountData);
-
-      console.log(`get accounts: `, accountData);
+      // @ts-expect-error avoid this eror
+      setRows(accountData);
     } catch (err) {
       console.error(err);
     }
@@ -47,6 +159,28 @@ const Account = () => {
   }, []);
 
   const colors = tokens(theme.palette.mode);
+
+  function EditToolbar(props: EditToolbarProps) {
+    const { setRows, setRowModesModel } = props;
+
+    const handleClick = () => {
+      const id = randomId();
+      setRows((oldRows) => [...oldRows, { id, name: "", isNew: true }]);
+      setRowModesModel((oldModel) => ({
+        ...oldModel,
+        [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+      }));
+    };
+
+    return (
+      <GridToolbarContainer>
+        <Button color={"inherit"} startIcon={<AddIcon />} onClick={handleClick}>
+          Add record
+        </Button>
+      </GridToolbarContainer>
+    );
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", align: "left" },
@@ -56,6 +190,7 @@ const Account = () => {
       flex: 1,
       cellClassName: "name-column--cell",
       align: "left",
+      editable: true,
     },
     {
       field: "magic",
@@ -63,6 +198,7 @@ const Account = () => {
       type: "string",
       headerAlign: "left",
       align: "left",
+      editable: true,
     },
     {
       field: "drawdownLimit",
@@ -70,6 +206,7 @@ const Account = () => {
       type: "string",
       headerAlign: "left",
       align: "left",
+      editable: true,
     },
     {
       field: "profitTarget",
@@ -77,6 +214,7 @@ const Account = () => {
       type: "string",
       headerAlign: "left",
       align: "left",
+      editable: true,
     },
     {
       field: "riskPerTrade",
@@ -92,10 +230,11 @@ const Account = () => {
       type: "number",
       headerAlign: "left",
       align: "left",
+      editable: true,
     },
     {
       field: "action",
-      headerName: "Action",
+      headerName: "",
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
@@ -115,6 +254,49 @@ const Account = () => {
             </Button>
           </Stack>
         );
+      },
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+          // <GridActionsCellItem
+          //   icon={<DeleteIcon />}
+          //   label="Delete"
+          //   onClick={handleDeleteClick(id)}
+          //   color="inherit"
+          // />,
+        ];
       },
     },
   ];
@@ -151,7 +333,21 @@ const Account = () => {
           },
         }}
       >
-        <DataGrid rows={accounts} columns={columns} />
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={processRowUpdate}
+          slots={{
+            toolbar: EditToolbar,
+          }}
+          slotProps={{
+            toolbar: { setRows, setRowModesModel },
+          }}
+        />
       </Box>
     </Box>
   );

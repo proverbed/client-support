@@ -97,7 +97,6 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
           where("date", "<=", endOfToday)
         );
 
-        console.log(value);
         observer = onSnapshot(
           q,
           (querySnapshot) => {
