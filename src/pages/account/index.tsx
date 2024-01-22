@@ -37,7 +37,7 @@ export interface AccountProps {
   id?: string;
   name: string;
   size: number;
-  magic: string;
+  magic: number;
   drawdownLimit: number;
   profitTarget: number;
   riskPerTrade: number;
@@ -105,6 +105,7 @@ const Account = () => {
 
     const updateData = {
       ...newRow,
+      magic: Number(newRow.magic),
     };
     delete updateData.id;
     delete updateData.isNew;
@@ -202,7 +203,7 @@ const Account = () => {
     {
       field: "drawdownLimit",
       headerName: "Drawdown Limit",
-      type: "string",
+      type: "number",
       headerAlign: "left",
       align: "left",
       editable: true,
@@ -210,7 +211,7 @@ const Account = () => {
     {
       field: "profitTarget",
       headerName: "Profit Target",
-      type: "string",
+      type: "number",
       headerAlign: "left",
       align: "left",
       editable: true,
@@ -218,7 +219,7 @@ const Account = () => {
     {
       field: "riskPerTrade",
       headerName: "Risk Per Trade",
-      type: "string",
+      type: "number",
       headerAlign: "left",
       align: "left",
       editable: true,
