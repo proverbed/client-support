@@ -92,7 +92,7 @@ const ViolationToday: React.FC<Props> = ({ accountId }) => {
         observer();
       }
     };
-  }, []);
+  }, [accountId]);
 
   return (
     <Box

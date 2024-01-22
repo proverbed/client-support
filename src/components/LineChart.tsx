@@ -1,19 +1,158 @@
-import { ResponsiveLine } from "@nivo/line";
+import { Datum, ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { mockLineData as data } from "../data/mockData";
+import { db } from "../config/Firebase";
+import { useState, useEffect } from "react";
+import { getDocs, collection, onSnapshot } from "firebase/firestore";
+import { query } from "firebase/firestore";
 
 type Props = {
   isDashboard?: boolean;
+  accountId: string;
 };
 
-const LineChart: React.FC<Props> = ({ isDashboard = false }) => {
+export interface DailyBalanceProps {
+  dailyBalance: number;
+  date: {
+    seconds: number;
+    nanoseconds: number;
+  };
+}
+
+export interface DailyBalanceProps {
+  dailyBalance: number;
+  date: {
+    seconds: number;
+    nanoseconds: number;
+  };
+}
+
+interface dataProps {
+  id: string;
+  data: Datum[];
+}
+
+const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const DAILY_BALANCE: string = "dailyBalance";
+
+  const emptyData = [
+    {
+      id: DAILY_BALANCE,
+      color: tokens("dark").greenAccent[500],
+      data: [],
+    },
+  ];
+
+  const [d, setViolation] = useState<dataProps[]>(emptyData);
+
+  const getNumberOfViolations = async () => {
+    try {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+
+      const q = query(collection(db, `accounts/${accountId}/${DAILY_BALANCE}`));
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // @ts-expect-error avoid this eror
+        const violationData: DailyBalanceProps[] = querySnapshot.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })
+        );
+        const myData = [
+          {
+            id: DAILY_BALANCE,
+            color: tokens("dark").greenAccent[500],
+            data: violationData.map((item) => ({
+              x: new Date(item.date.seconds * 1000).toDateString(),
+              y: item.dailyBalance,
+            })),
+          },
+        ];
+        setViolation(myData);
+        return `accounts/${accountId}/${DAILY_BALANCE}`;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    let pathVar;
+    // let unsubscribe;
+    const pathResult = (async () => {
+      pathVar = await getNumberOfViolations();
+      return pathVar;
+    })();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let observer: any;
+    pathResult.then((value) => {
+      if (value !== undefined) {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const endOfToday = new Date();
+        endOfToday.setHours(23, 59, 59, 999);
+
+        const q = query(
+          collection(db, `accounts/${accountId}/${DAILY_BALANCE}`)
+        );
+
+        observer = onSnapshot(
+          q,
+          (querySnapshot) => {
+            console.log(
+              `Daily Balnace Received query snapshot ${JSON.stringify(
+                querySnapshot.size,
+                null,
+                2
+              )}`
+            );
+
+            // @ts-expect-error avoid this eror
+            const violationData: DailyBalanceProps[] = querySnapshot.docs.map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
+            const myData = [
+              {
+                id: DAILY_BALANCE,
+                color: tokens("dark").greenAccent[500],
+                data: violationData.map((item) => ({
+                  x: new Date(item.date.seconds * 1000).toDateString(),
+                  y: item.dailyBalance,
+                })),
+              },
+            ];
+            setViolation(myData);
+          },
+          (err) => {
+            console.log(`Encountered error: ${err}`);
+          }
+        );
+      }
+    });
+
+    return () => {
+      if (observer !== undefined) {
+        observer();
+      }
+    };
+  }, [accountId]);
+
   return (
     <ResponsiveLine
-      data={data}
+      data={d}
       theme={{
         axis: {
           domain: {

@@ -80,7 +80,7 @@ const TradeBalanceToday: React.FC<Props> = ({ accountId }) => {
         observer();
       }
     };
-  }, []);
+  }, [accountId]);
 
   return (
     <Box

@@ -122,7 +122,7 @@ const Dashboard = () => {
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
+            <LineChart isDashboard={true} accountId={numTradesAccountId} />
           </Box>
         </Box>
         <Box

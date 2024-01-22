@@ -122,7 +122,7 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
         observer();
       }
     };
-  }, []);
+  }, [accountId]);
 
   return (
     <>

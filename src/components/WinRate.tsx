@@ -121,7 +121,7 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
         observer();
       }
     };
-  }, []);
+  }, [accountId]);
 
   return (
     <>
