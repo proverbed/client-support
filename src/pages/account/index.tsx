@@ -107,7 +107,10 @@ const Account = () => {
       ...newRow,
       magic: Number(newRow.magic),
     };
+
+    // @ts-expect-error avoid this eror
     delete updateData.id;
+    // @ts-expect-error avoid this eror
     delete updateData.isNew;
 
     try {
