@@ -1,22 +1,24 @@
-import { Box, useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import { query, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { db } from "../config/Firebase";
-import { getDocs, collection, onSnapshot, doc } from "firebase/firestore";
-import StatsBox from "./StatsBox";
+import { Box, useTheme } from '@mui/material';
+import {
+  query, where, getDocs, collection, onSnapshot, doc,
+} from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { db } from '../config/Firebase.ts';
+import { tokens } from '../theme.ts';
+import StatsBox from './StatsBox.tsx';
 
 type Props = {
   accountId: string;
 };
 
-const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
+function NumberTradesToday({ accountId }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [numTrades, setNumTrades] = useState<number>(0);
 
   const getNumberOfTrades = async () => {
+    let path = '';
     try {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -25,19 +27,20 @@ const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
 
       const q = query(
         collection(db, `accounts/${accountId}/numTrades`),
-        where("date", ">=", startOfToday),
-        where("date", "<=", endOfToday)
+        where('date', '>=', startOfToday),
+        where('date', '<=', endOfToday),
       );
 
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         setNumTrades(querySnapshot.docs[0].data().numberTrades);
-        return `accounts/${accountId}/numTrades/${querySnapshot.docs[0].id}`;
+        path = `accounts/${accountId}/numTrades/${querySnapshot.docs[0].id}`;
       }
     } catch (err) {
       console.error(err);
     }
+    return path;
   };
 
   useEffect(() => {
@@ -59,14 +62,14 @@ const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
               `Received query snapshot ${JSON.stringify(
                 querySnapshot.data(),
                 null,
-                2
-              )}`
+                2,
+              )}`,
             );
             setNumTrades(querySnapshot.data()?.numberTrades);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
-          }
+          },
         );
       }
     });
@@ -89,6 +92,7 @@ const NumberTradesToday: React.FC<Props> = ({ accountId }) => {
       <StatsBox title={String(numTrades)} subtitle="Total Trades" />
     </Box>
   );
-};
+}
+NumberTradesToday.displayName = 'NumberTradesToday';
 
 export default NumberTradesToday;

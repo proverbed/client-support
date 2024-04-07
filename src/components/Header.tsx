@@ -1,12 +1,12 @@
-import { Typography, Box, useTheme } from "@mui/material";
-import { tokens } from "../theme";
+import { Typography, Box, useTheme } from '@mui/material';
+import { tokens } from '../theme.ts';
 
-type Props = {
+type HeaderProps = {
   title: string;
   subtitle: string;
 };
 
-const Header: React.FC<Props> = ({ title, subtitle }) => {
+function Header({ title, subtitle }: HeaderProps) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -15,7 +15,7 @@ const Header: React.FC<Props> = ({ title, subtitle }) => {
         variant="h2"
         color={colors.grey[100]}
         fontWeight="bold"
-        sx={{ m: "0 0 5px 0" }}
+        sx={{ m: '0 0 5px 0' }}
       >
         {title}
       </Typography>
@@ -24,6 +24,7 @@ const Header: React.FC<Props> = ({ title, subtitle }) => {
       </Typography>
     </Box>
   );
-};
+}
+Header.displayName = 'Header';
 
 export default Header;

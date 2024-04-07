@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, useTheme, Button, Stack } from "@mui/material";
+import {
+  Box, useTheme, Button, Stack,
+} from '@mui/material';
 import {
   GridRowsProp,
   GridRowModesModel,
@@ -12,11 +13,8 @@ import {
   GridRowId,
   GridRowModel,
   GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import Header from "../../components/Header";
-import { db } from "../../config/Firebase";
-import { useEffect, useState } from "react";
+} from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import {
   getDoc,
   getDocs,
@@ -24,13 +22,16 @@ import {
   doc,
   updateDoc,
   setDoc,
-} from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
-import { randomId } from "@mui/x-data-grid-generator";
+} from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Close';
+import { randomId } from '@mui/x-data-grid-generator';
+import { db } from '../../config/Firebase.ts';
+import Header from '../../components/Header.tsx';
+import { tokens } from '../../theme.ts';
 
 export interface AccountProps {
   isNew: boolean;
@@ -50,7 +51,7 @@ interface EditToolbarProps {
   ) => void;
 }
 
-const Account = () => {
+function Account() {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -58,9 +59,9 @@ const Account = () => {
 
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (
     params,
-    event
+    event,
   ) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
@@ -114,7 +115,7 @@ const Account = () => {
     delete updateData.isNew;
 
     try {
-      let accountPath = `accounts/${newRow.id}`;
+      const accountPath = `accounts/${newRow.id}`;
       const docSnap = await getDoc(doc(db, accountPath));
 
       if (docSnap.exists()) {
@@ -142,14 +143,12 @@ const Account = () => {
 
   const getAccountList = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "accounts"));
+      const querySnapshot = await getDocs(collection(db, 'accounts'));
       // @ts-expect-error avoid this eror
-      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
+      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       // @ts-expect-error avoid this eror
       setRows(accountData);
     } catch (err) {
@@ -168,76 +167,75 @@ const Account = () => {
 
     const handleClick = () => {
       const id = randomId();
-      setRows((oldRows) => [...oldRows, { id, name: "", isNew: true }]);
+      setRows((oldRows) => [...oldRows, { id, name: '', isNew: true }]);
       setRowModesModel((oldModel) => ({
         ...oldModel,
-        [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
       }));
     };
 
     return (
       <GridToolbarContainer>
-        <Button color={"inherit"} startIcon={<AddIcon />} onClick={handleClick}>
+        <Button color="inherit" startIcon={<AddIcon />} onClick={handleClick}>
           Add record
         </Button>
       </GridToolbarContainer>
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", align: "left" },
+    { field: 'id', headerName: 'ID', align: 'left' },
     {
-      field: "name",
-      headerName: "Name",
+      field: 'name',
+      headerName: 'Name',
       flex: 1,
-      cellClassName: "name-column--cell",
-      align: "left",
+      cellClassName: 'name-column--cell',
+      align: 'left',
       editable: true,
     },
     {
-      field: "magic",
-      headerName: "Magic",
-      type: "string",
-      headerAlign: "left",
-      align: "left",
+      field: 'magic',
+      headerName: 'Magic',
+      type: 'string',
+      headerAlign: 'left',
+      align: 'left',
       editable: true,
     },
     {
-      field: "drawdownLimit",
-      headerName: "Drawdown Limit",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: 'drawdownLimit',
+      headerName: 'Drawdown Limit',
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left',
       editable: true,
     },
     {
-      field: "profitTarget",
-      headerName: "Profit Target",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: 'profitTarget',
+      headerName: 'Profit Target',
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left',
       editable: true,
     },
     {
-      field: "riskPerTrade",
-      headerName: "Risk Per Trade",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: 'riskPerTrade',
+      headerName: 'Risk Per Trade',
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left',
       editable: true,
     },
     {
-      field: "size",
-      headerName: "Size",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: 'size',
+      headerName: 'Size',
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left',
       editable: true,
     },
     {
-      field: "action",
-      headerName: "",
+      field: 'action',
+      headerName: '',
       sortable: false,
       renderCell: (params) => {
         const onClick = () => {
@@ -260,11 +258,11 @@ const Account = () => {
       },
     },
     {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
       width: 100,
-      cellClassName: "actions",
+      cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -311,27 +309,27 @@ const Account = () => {
         m="40px 0 0 0"
         height="75vh"
         sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
+          '& .MuiDataGrid-root': {
+            border: 'none',
           },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
+          '& .MuiDataGrid-cell': {
+            borderBottom: 'none',
           },
-          "& .name-column--cell": {
+          '& .name-column--cell': {
             color: colors.greenAccent[300],
           },
-          "& .MuiDataGrid-columnHeaders": {
+          '& .MuiDataGrid-columnHeaders': {
             backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
+            borderBottom: 'none',
           },
-          "& .MuiDataGrid-virtualScroller": {
+          '& .MuiDataGrid-virtualScroller': {
             backgroundColor: colors.primary[400],
           },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
+          '& .MuiDataGrid-footerContainer': {
+            borderTop: 'none',
             backgroundColor: colors.blueAccent[700],
           },
-          "& .MuiCheckbox-root": {
+          '& .MuiCheckbox-root': {
             color: `${colors.greenAccent[200]} !important`,
           },
         }}
@@ -354,6 +352,6 @@ const Account = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Account;

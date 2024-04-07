@@ -1,18 +1,19 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import ProgressCircle from "./ProgressCircle";
+import { Box, Typography, useTheme } from '@mui/material';
+import React from 'react';
+import { tokens } from '../theme.ts';
+import ProgressCircle from './ProgressCircle.tsx';
 
 type Props = {
   title: string;
   subtitle: string;
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   progress: number;
   increase: string;
   displayProgress?: boolean;
   displayIncrease?: boolean;
 };
 
-const StatBox: React.FC<Props> = ({
+function StatBox({
   title,
   subtitle,
   icon,
@@ -20,7 +21,7 @@ const StatBox: React.FC<Props> = ({
   increase,
   displayProgress = true,
   displayIncrease = true,
-}) => {
+}: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -59,6 +60,11 @@ const StatBox: React.FC<Props> = ({
       </Box>
     </Box>
   );
+}
+StatBox.displayName = 'StatBox';
+StatBox.defaultProps = {
+  displayProgress: true,
+  displayIncrease: true,
 };
 
 export default StatBox;

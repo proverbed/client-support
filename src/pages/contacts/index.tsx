@@ -1,54 +1,53 @@
-import { Box } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataContacts } from "../../data/mockData";
-import Header from "../../components/Header";
-import { useTheme } from "@mui/material";
+import { Box, useTheme } from '@mui/material';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { tokens } from '../../theme';
+import { mockDataContacts } from '../../data/mockData';
+import Header from '../../components/Header';
 
-const Contacts = () => {
+function Contacts() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: any = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: 'id', headerName: 'ID', flex: 0.5 },
+    { field: 'registrarId', headerName: 'Registrar ID' },
     {
-      field: "name",
-      headerName: "Name",
+      field: 'name',
+      headerName: 'Name',
       flex: 1,
-      cellClassName: "name-column--cell",
+      cellClassName: 'name-column--cell',
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: 'age',
+      headerName: 'Age',
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left',
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
+      field: 'phone',
+      headerName: 'Phone Number',
       flex: 1,
     },
     {
-      field: "address",
-      headerName: "Address",
+      field: 'email',
+      headerName: 'Email',
       flex: 1,
     },
     {
-      field: "city",
-      headerName: "City",
+      field: 'address',
+      headerName: 'Address',
       flex: 1,
     },
     {
-      field: "zipCode",
-      headerName: "Zip Code",
+      field: 'city',
+      headerName: 'City',
+      flex: 1,
+    },
+    {
+      field: 'zipCode',
+      headerName: 'Zip Code',
       flex: 1,
     },
   ];
@@ -63,30 +62,30 @@ const Contacts = () => {
         m="40px 0 0 0"
         height="75vh"
         sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
+          '& .MuiDataGrid-root': {
+            border: 'none',
           },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
+          '& .MuiDataGrid-cell': {
+            borderBottom: 'none',
           },
-          "& .name-column--cell": {
+          '& .name-column--cell': {
             color: colors.greenAccent[300],
           },
-          "& .MuiDataGrid-columnHeaders": {
+          '& .MuiDataGrid-columnHeaders': {
             backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
+            borderBottom: 'none',
           },
-          "& .MuiDataGrid-virtualScroller": {
+          '& .MuiDataGrid-virtualScroller': {
             backgroundColor: colors.primary[400],
           },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
+          '& .MuiDataGrid-footerContainer': {
+            borderTop: 'none',
             backgroundColor: colors.blueAccent[700],
           },
-          "& .MuiCheckbox-root": {
+          '& .MuiCheckbox-root': {
             color: `${colors.greenAccent[200]} !important`,
           },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+          '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
             color: `${colors.grey[100]} !important`,
           },
         }}
@@ -99,6 +98,6 @@ const Contacts = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Contacts;

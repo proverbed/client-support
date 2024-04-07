@@ -1,25 +1,26 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import TradeDetailsPage from "./pages/TradeDetailsPage";
-import RootLayout from "./pages/Root";
-import ErrorPage from "./pages/ErrorPage";
-import { AuthContextProvider } from "./store/AuthContext";
-import Protected from "./pages/Protected";
-import Account from "./pages/account";
-import Invoices from "./pages/invoices";
-import Contacts from "./pages/contacts";
-import FAQ from "./pages/faq";
-import Form from "./pages/form";
-import Calendar from "./pages/calendar/calendar";
-import Bar from "./pages/bar";
-import Line from "./pages/line";
-import Pie from "./pages/pie";
-import Dashboard from "./pages/dashboard";
-import AccountDashboard from "./pages/accountDashboard";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import HomePage from './pages/HomePage.tsx';
+import TradeDetailsPage from './pages/TradeDetailsPage.tsx';
+import RootLayout from './pages/Root.tsx';
+import ErrorPage from './pages/ErrorPage.tsx';
+
+import Protected from './pages/Protected.tsx';
+import Account from './pages/account/index.tsx';
+import Invoices from './pages/invoices/index.tsx';
+import Contacts from './pages/contacts/index.tsx';
+import FAQ from './pages/faq/index.tsx';
+import Form from './pages/form/index.tsx';
+import Calendar from './pages/calendar/calendar.tsx';
+import Bar from './pages/bar/index.tsx';
+import Line from './pages/line/index.tsx';
+import Pie from './pages/pie/index.tsx';
+import Dashboard from './pages/dashboard/index.tsx';
+import AccountDashboard from './pages/accountDashboard/index.tsx';
+import AuthContextProvider from './store/AuthContextProvider.tsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: (
       <AuthContextProvider>
         <RootLayout />
@@ -27,9 +28,9 @@ const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <HomePage /> },
+      { path: '/', element: <HomePage /> },
       {
-        path: "/trade/:tradeId",
+        path: '/trade/:tradeId',
         element: (
           <Protected>
             <TradeDetailsPage />
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/:accountId",
+        path: '/dashboard/:accountId',
         element: (
           <Protected>
             <AccountDashboard />
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/account",
+        path: '/account',
         element: (
           <Protected>
             <Account />
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/invoices",
+        path: '/invoices',
         element: (
           <Protected>
             <Invoices />
@@ -61,7 +62,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/contacts",
+        path: '/contacts',
         element: (
           <Protected>
             <Contacts />
@@ -69,7 +70,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/faq",
+        path: '/faq',
         element: (
           <Protected>
             <FAQ />
@@ -77,7 +78,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/form",
+        path: '/form',
         element: (
           <Protected>
             <Form />
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/calendar",
+        path: '/calendar',
         element: (
           <Protected>
             <Calendar />
@@ -93,7 +94,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/bar",
+        path: '/bar',
         element: (
           <Protected>
             <Bar />
@@ -101,7 +102,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/line",
+        path: '/line',
         element: (
           <Protected>
             <Line />
@@ -109,7 +110,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/pie",
+        path: '/pie',
         element: (
           <Protected>
             <Pie />
@@ -117,7 +118,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dash",
+        path: '/dash',
         element: (
           <Protected>
             <Dashboard />

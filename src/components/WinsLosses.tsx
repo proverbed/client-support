@@ -1,11 +1,12 @@
-import { Box, useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import { query, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { db } from "../config/Firebase";
-import { getDocs, collection, onSnapshot } from "firebase/firestore";
-import StatsBox from "./StatsBox";
-import { defaultValue } from "../helperFunctions/defaultValue";
+import { Box, useTheme } from '@mui/material';
+import {
+  query, where, getDocs, collection, onSnapshot,
+} from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { db } from '../config/Firebase.ts';
+import { tokens } from '../theme.ts';
+import StatsBox from './StatsBox.tsx';
+import winRate from '../util/math.ts';
 
 export interface TradesProps {
   id?: string;
@@ -24,14 +25,15 @@ type Props = {
   accountId: string;
 };
 
-const WinsLosses: React.FC<Props> = ({ accountId }) => {
+function WinsLosses({ accountId }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [winslosses, setWinslosses] = useState<number[]>([]);
-  const TRADES = "trades";
+  const TRADES = 'trades';
 
   const getNumberOfViolations = async () => {
+    let path = '';
     try {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -40,8 +42,8 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
 
       const q = query(
         collection(db, `accounts/${accountId}/${TRADES}`),
-        where("date", ">=", startOfToday),
-        where("date", "<=", endOfToday)
+        where('date', '>=', startOfToday),
+        where('date', '<=', endOfToday),
       );
 
       const querySnapshot = await getDocs(q);
@@ -52,29 +54,16 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("trades Data: ", winRate(tradeData));
+        console.log('trades Data: ', winRate(tradeData));
 
         setWinslosses(winRate(tradeData));
-        return `accounts/${accountId}/${TRADES}`;
-      } else {
-        setWinslosses([0, 0]);
+        path = `accounts/${accountId}/${TRADES}`;
       }
+      setWinslosses([0, 0]);
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const winRate = function (arr: TradesProps[]) {
-    const total = arr.length;
-    let count = 0;
-
-    arr.forEach((item) => {
-      if (item.profit > 0) {
-        count++;
-      }
-    });
-
-    return [defaultValue(count, 0), defaultValue(total - count, 0)];
+    return path;
   };
 
   useEffect(() => {
@@ -96,14 +85,14 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
 
         const q = query(
           collection(db, `accounts/${accountId}/${TRADES}`),
-          where("date", ">=", startOfToday),
-          where("date", "<=", endOfToday)
+          where('date', '>=', startOfToday),
+          where('date', '<=', endOfToday),
         );
 
         observer = onSnapshot(
           q,
           (querySnapshot) => {
-            //@ts-expect-error avoid this eror
+            // @ts-expect-error avoid this eror
             const tradeData: TradesProps[] = querySnapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
@@ -113,7 +102,7 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
-          }
+          },
         );
       }
     });
@@ -127,21 +116,20 @@ const WinsLosses: React.FC<Props> = ({ accountId }) => {
   }, [accountId]);
 
   return (
-    <>
-      <Box
-        gridColumn="span 2"
-        sx={{ bgcolor: colors.primary[400] }}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <StatsBox
-          title={`${winslosses[0]} / ${winslosses[1]}`}
-          subtitle="Wins/Losses"
-        />
-      </Box>
-    </>
+    <Box
+      gridColumn="span 2"
+      sx={{ bgcolor: colors.primary[400] }}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <StatsBox
+        title={`${winslosses[0]} / ${winslosses[1]}`}
+        subtitle="Wins/Losses"
+      />
+    </Box>
   );
-};
+}
+WinsLosses.displayName = 'WinsLosses';
 
 export default WinsLosses;

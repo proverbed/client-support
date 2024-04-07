@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import { formatDate } from "@fullcalendar/core";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
+import { useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import { formatDate } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import {
   Box,
   List,
@@ -13,17 +13,17 @@ import {
   ListItemText,
   Typography,
   useTheme,
-} from "@mui/material";
-import Header from "../../components/Header";
-import { tokens } from "../../theme";
+} from '@mui/material';
+import Header from '../../components/Header';
+import { tokens } from '../../theme';
 
-const Calendar = () => {
+function Calendar() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
 
   const handleDateClick = (selected: any) => {
-    const title = prompt("Please enter a new title for your event");
+    const title = prompt('Please enter a new title for your event');
     const calendarApi = selected.view.calendar;
     calendarApi.unselect();
 
@@ -41,7 +41,7 @@ const Calendar = () => {
   const handleEventClick = (selected: any) => {
     if (
       window.confirm(
-        `Are you sure you want to delete the event '${selected.event.title}'`
+        `Are you sure you want to delete the event '${selected.event.title}'`,
       )
     ) {
       selected.event.remove();
@@ -67,21 +67,21 @@ const Calendar = () => {
                 key={event.id}
                 sx={{
                   backgroundColor: colors.greenAccent[500],
-                  margin: "10px 0",
-                  borderRadius: "2px",
+                  margin: '10px 0',
+                  borderRadius: '2px',
                 }}
               >
                 <ListItemText
                   primary={event.title}
-                  secondary={
+                  secondary={(
                     <Typography>
                       {formatDate(event.start, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
                       })}
                     </Typography>
-                  }
+                  )}
                 />
               </ListItem>
             ))}
@@ -99,28 +99,28 @@ const Calendar = () => {
               listPlugin,
             ]}
             headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
             }}
             initialView="dayGridMonth"
-            editable={true}
-            selectable={true}
-            selectMirror={true}
-            dayMaxEvents={true}
+            editable
+            selectable
+            selectMirror
+            dayMaxEvents
             select={handleDateClick}
             eventClick={handleEventClick}
             eventsSet={(events: any) => setCurrentEvents(events)}
             initialEvents={[
               {
-                id: "12315",
-                title: "All-day event",
-                date: "2022-09-14",
+                id: '12315',
+                title: 'All-day event',
+                date: '2022-09-14',
               },
               {
-                id: "5123",
-                title: "Timed event",
-                date: "2022-09-28",
+                id: '5123',
+                title: 'Timed event',
+                date: '2022-09-28',
               },
             ]}
           />
@@ -128,6 +128,6 @@ const Calendar = () => {
       </Box>
     </Box>
   );
-};
+}
 
 export default Calendar;

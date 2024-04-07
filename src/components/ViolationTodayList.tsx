@@ -1,9 +1,10 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import { query, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { db } from "../config/Firebase";
-import { getDocs, collection, onSnapshot } from "firebase/firestore";
+import { Box, Typography, useTheme } from '@mui/material';
+import {
+  query, where, getDocs, collection, onSnapshot,
+} from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { db } from '../config/Firebase.ts';
+import { tokens } from '../theme.ts';
 
 export interface ViolationProps {
   id?: string;
@@ -23,14 +24,15 @@ type Props = {
   accountId: string;
 };
 
-const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
+function ViolationTodayList({ accountId }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [violation, setViolation] = useState<ViolationProps[]>([]);
-  const VIOLATION = "violation";
+  const VIOLATION = 'violation';
 
   const getNumberOfViolations = async () => {
+    let path = '';
     try {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -39,8 +41,8 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
 
       const q = query(
         collection(db, `accounts/${accountId}/${VIOLATION}`),
-        where("date", ">=", startOfToday),
-        where("date", "<=", endOfToday)
+        where('date', '>=', startOfToday),
+        where('date', '<=', endOfToday),
       );
 
       const querySnapshot = await getDocs(q);
@@ -51,18 +53,19 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
           (doc) => ({
             id: doc.id,
             ...doc.data(),
-          })
+          }),
         );
-        console.log("violationData: ", violationData);
+        console.log('violationData: ', violationData);
 
         setViolation(violationData);
         // const path =
         //   `accounts/${accountId}/${VIOLATION}/` + querySnapshot.docs[0].id;
-        return `accounts/${accountId}/${VIOLATION}`;
+        path = `accounts/${accountId}/${VIOLATION}`;
       }
     } catch (err) {
       console.error(err);
     }
+    return path;
   };
 
   useEffect(() => {
@@ -84,8 +87,8 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
 
         const q = query(
           collection(db, `accounts/${accountId}/${VIOLATION}`),
-          where("date", ">=", startOfToday),
-          where("date", "<=", endOfToday)
+          where('date', '>=', startOfToday),
+          where('date', '<=', endOfToday),
         );
 
         console.log(value);
@@ -96,23 +99,23 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
               `ViolationsList Received query snapshot ${JSON.stringify(
                 querySnapshot.size,
                 null,
-                2
-              )}`
+                2,
+              )}`,
             );
 
-            //@ts-expect-error avoid this eror
+            // @ts-expect-error avoid this eror
             const violationData: ViolationProps[] = querySnapshot.docs.map(
               (doc) => ({
                 id: doc.id,
                 ...doc.data(),
-              })
+              }),
             );
 
             setViolation(violationData);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
-          }
+          },
         );
       }
     });
@@ -137,9 +140,10 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
           Recent Violations
         </Typography>
       </Box>
-      {violation.map((violation, i) => (
+      {violation.map((item, i) => (
         <Box
-          key={`${violation.id}-${i}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`${item.id}-${i}`}
           display="flex"
           justifyContent="space-between"
           alignItems="center"
@@ -152,34 +156,39 @@ const ViolationTodayList: React.FC<Props> = ({ accountId }) => {
               variant="h5"
               fontWeight="600"
             >
-              {violation.id?.substring(0, 5)}
+              {item.id?.substring(0, 5)}
             </Typography>
-            <Typography color={colors.grey[100]}>{violation.ticket}</Typography>
-            {violation.risk && (
+            <Typography color={colors.grey[100]}>{item.ticket}</Typography>
+            {item.risk && (
               <Typography
                 color={colors.grey[100]}
-              >{`${violation.risk}:${violation.riskPerTrade}`}</Typography>
+              >
+                {`${item.risk}:${item.riskPerTrade}`}
+              </Typography>
             )}
-            {violation.ticketList && (
+            {item.ticketList && (
               <Typography
                 color={colors.grey[100]}
-              >{`${violation.ticketList}`}</Typography>
+              >
+                {`${item.ticketList}`}
+              </Typography>
             )}
           </Box>
           <Box color={colors.grey[100]}>
-            {new Date(violation.date.seconds * 1000).toDateString()}
+            {new Date(item.date.seconds * 1000).toDateString()}
           </Box>
           <Box
             sx={{ bgcolor: colors.greenAccent[600] }}
             p="5px 10px"
             borderRadius="4px"
           >
-            {violation.type}
+            {item.type}
           </Box>
         </Box>
       ))}
     </>
   );
-};
+}
+ViolationTodayList.displayName = 'ViolationTodayList';
 
 export default ViolationTodayList;

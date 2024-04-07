@@ -1,12 +1,12 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { tokens } from "../theme";
+import { Box, Typography, useTheme } from '@mui/material';
+import { tokens } from '../theme.ts';
 
 type Props = {
   title: string;
   subtitle: string;
 };
 
-const StatsBox: React.FC<Props> = ({ title, subtitle }) => {
+function StatsBox({ title, subtitle }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -30,6 +30,7 @@ const StatsBox: React.FC<Props> = ({ title, subtitle }) => {
       </Box>
     </Box>
   );
-};
+}
+StatsBox.displayName = 'StatsBox';
 
 export default StatsBox;

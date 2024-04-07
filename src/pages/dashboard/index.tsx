@@ -1,17 +1,19 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import BarChart from "../../components/BarChart";
-import StatBox from "../../components/StatBox";
-import ProgressCircle from "../../components/ProgressCircle";
-import NumberTradesToday from "../../components/NumberTradesToday";
-import TradeBalanceToday from "../../components/TradeBalanceToday";
-import ViolationToday from "../../components/ViolationToday";
-import ViolationTodayList from "../../components/ViolationTodayList";
-import { configSettings } from "../../config/config";
+import {
+  Box, Button, IconButton, Typography, useTheme,
+} from '@mui/material';
+import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
+import TrafficIcon from '@mui/icons-material/Traffic';
+import { tokens } from '../../theme';
+import Header from '../../components/Header';
+import LineChart from '../../components/LineChart';
+import BarChart from '../../components/BarChart';
+import StatBox from '../../components/StatBox';
+import ProgressCircle from '../../components/ProgressCircle';
+import NumberTradesToday from '../../components/NumberTradesToday';
+import TradeBalanceToday from '../../components/TradeBalanceToday';
+import ViolationToday from '../../components/ViolationToday';
+import ViolationTodayList from '../../components/ViolationTodayList';
+import { configSettings } from '../../config/config';
 
 export interface NumTradesProps {
   id?: string;
@@ -19,17 +21,14 @@ export interface NumTradesProps {
   numberTrades: number;
 }
 
-const Dashboard = () => {
+function Dashboard() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const myEnv = import.meta.env.PROD ? `prod` : `dev`;
-  const numTradesAccountId =
-    configSettings["num-trades-today"][myEnv].accountId;
-  const tradeBalancecAccountId =
-    configSettings["trade-balance-today"][myEnv].accountId;
-  const violationTodayAccountId =
-    configSettings["violation-today"][myEnv].accountId;
+  const myEnv = import.meta.env.PROD ? 'prod' : 'dev';
+  const numTradesAccountId = configSettings['num-trades-today'][myEnv].accountId;
+  const tradeBalancecAccountId = configSettings['trade-balance-today'][myEnv].accountId;
+  const violationTodayAccountId = configSettings['violation-today'][myEnv].accountId;
 
   return (
     <Box m="20px">
@@ -42,12 +41,12 @@ const Dashboard = () => {
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
+              fontSize: '14px',
+              fontWeight: 'bold',
+              padding: '10px 20px',
             }}
           >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
+            <DownloadOutlinedIcon sx={{ mr: '10px' }} />
             Download Reports
           </Button>
         </Box>
@@ -76,11 +75,11 @@ const Dashboard = () => {
             subtitle="Traffic Received"
             progress={0.8}
             increase="+43%"
-            icon={
+            icon={(
               <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: '26px' }}
               />
-            }
+            )}
           />
         </Box>
 
@@ -116,13 +115,13 @@ const Dashboard = () => {
             <Box>
               <IconButton>
                 <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+                  sx={{ fontSize: '26px', color: colors.greenAccent[500] }}
                 />
               </IconButton>
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} accountId={numTradesAccountId} />
+            <LineChart isDashboard accountId={numTradesAccountId} />
           </Box>
         </Box>
         <Box
@@ -154,7 +153,7 @@ const Dashboard = () => {
             <Typography
               variant="h5"
               color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
+              sx={{ mt: '15px' }}
             >
               $48,352 revenue generated
             </Typography>
@@ -169,17 +168,17 @@ const Dashboard = () => {
           <Typography
             variant="h5"
             fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
+            sx={{ padding: '30px 30px 0 30px' }}
           >
             Sales Quantity
           </Typography>
           <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
+            <BarChart isDashboard />
           </Box>
         </Box>
       </Box>
     </Box>
   );
-};
+}
 
 export default Dashboard;

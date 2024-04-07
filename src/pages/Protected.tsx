@@ -1,5 +1,5 @@
-import { Navigate } from "react-router-dom";
-import { UserAuth } from "../store/AuthContext";
+import { Navigate } from 'react-router-dom';
+import { UserAuth } from '../store/AuthContext.tsx';
 
 function Protected({ children }: { children?: React.ReactNode }) {
   const { user } = UserAuth();

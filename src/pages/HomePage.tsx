@@ -1,4 +1,4 @@
-import { UserAuth } from "../store/AuthContext";
+import { UserAuth } from '../store/AuthContext.tsx';
 
 function HomePage() {
   const { googleSignIn, user } = UserAuth();

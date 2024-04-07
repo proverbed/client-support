@@ -1,10 +1,12 @@
-import { Box, useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import { query, where } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { db } from "../config/Firebase";
-import { getDocs, collection, onSnapshot } from "firebase/firestore";
-import StatsBox from "./StatsBox";
+import { Box, useTheme } from '@mui/material';
+import {
+  query, where, getDocs, collection, onSnapshot,
+} from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { db } from '../config/Firebase.ts';
+import { tokens } from '../theme.ts';
+import StatsBox from './StatsBox.tsx';
+import winRate from '../util/math.ts';
 
 export interface TradesProps {
   id?: string;
@@ -23,14 +25,15 @@ type Props = {
   accountId: string;
 };
 
-const WinRate: React.FC<Props> = ({ accountId }) => {
+function WinRate({ accountId }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [winrate, setWinrate] = useState<string>("0");
-  const TRADES = "trades";
+  const [winrate, setWinrate] = useState<string>('0');
+  const TRADES = 'trades';
 
   const getNumberOfViolations = async () => {
+    let path = '';
     try {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -39,8 +42,8 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
 
       const q = query(
         collection(db, `accounts/${accountId}/${TRADES}`),
-        where("date", ">=", startOfToday),
-        where("date", "<=", endOfToday)
+        where('date', '>=', startOfToday),
+        where('date', '<=', endOfToday),
       );
 
       const querySnapshot = await getDocs(q);
@@ -51,27 +54,15 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("trades Data: ", winRate(tradeData));
+        console.log('trades Data: ', winRate(tradeData));
 
         setWinrate(winRate(tradeData));
-        return `accounts/${accountId}/${TRADES}`;
+        path = `accounts/${accountId}/${TRADES}`;
       }
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const winRate = function (arr: TradesProps[]) {
-    const total = arr.length;
-    let count = 0;
-
-    arr.forEach((item) => {
-      if (item.profit > 0) {
-        count++;
-      }
-    });
-
-    return parseFloat(String((count / total) * 100)).toFixed(2);
+    return path;
   };
 
   useEffect(() => {
@@ -93,14 +84,14 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
 
         const q = query(
           collection(db, `accounts/${accountId}/${TRADES}`),
-          where("date", ">=", startOfToday),
-          where("date", "<=", endOfToday)
+          where('date', '>=', startOfToday),
+          where('date', '<=', endOfToday),
         );
 
         observer = onSnapshot(
           q,
           (querySnapshot) => {
-            //@ts-expect-error avoid this eror
+            // @ts-expect-error avoid this eror
             const tradeData: TradesProps[] = querySnapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
@@ -110,7 +101,7 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
-          }
+          },
         );
       }
     });
@@ -123,18 +114,17 @@ const WinRate: React.FC<Props> = ({ accountId }) => {
   }, [accountId]);
 
   return (
-    <>
-      <Box
-        gridColumn="span 2"
-        sx={{ bgcolor: colors.primary[400] }}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <StatsBox title={`${winrate} %`} subtitle="Win Rate" />
-      </Box>
-    </>
+    <Box
+      gridColumn="span 2"
+      sx={{ bgcolor: colors.primary[400] }}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <StatsBox title={`${winrate} %`} subtitle="Win Rate" />
+    </Box>
   );
-};
+}
+WinRate.displayName = 'WinRate';
 
 export default WinRate;

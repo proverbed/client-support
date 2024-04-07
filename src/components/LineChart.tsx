@@ -1,10 +1,11 @@
-import { Datum, ResponsiveLine } from "@nivo/line";
-import { useTheme } from "@mui/material";
-import { tokens } from "../theme";
-import { db } from "../config/Firebase";
-import { useState, useEffect } from "react";
-import { getDocs, collection, onSnapshot } from "firebase/firestore";
-import { query } from "firebase/firestore";
+import { Datum, ResponsiveLine } from '@nivo/line';
+import { useTheme } from '@mui/material';
+import { useState, useEffect } from 'react';
+import {
+  getDocs, collection, onSnapshot, query,
+} from 'firebase/firestore';
+import { db } from '../config/Firebase.ts';
+import { tokens } from '../theme.ts';
 
 type Props = {
   isDashboard?: boolean;
@@ -19,29 +20,21 @@ export interface DailyBalanceProps {
   };
 }
 
-export interface DailyBalanceProps {
-  dailyBalance: number;
-  date: {
-    seconds: number;
-    nanoseconds: number;
-  };
-}
-
 interface dataProps {
   id: string;
   data: Datum[];
 }
 
-const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
+function LineChart({ accountId, isDashboard = false }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const DAILY_BALANCE: string = "dailyBalance";
+  const DAILY_BALANCE: string = 'dailyBalance';
 
   const emptyData = [
     {
       id: DAILY_BALANCE,
-      color: tokens("dark").greenAccent[500],
+      color: tokens('dark').greenAccent[500],
       data: [],
     },
   ];
@@ -49,6 +42,7 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
   const [d, setViolation] = useState<dataProps[]>(emptyData);
 
   const getNumberOfViolations = async () => {
+    let path = '';
     try {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -65,12 +59,12 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
           (doc) => ({
             id: doc.id,
             ...doc.data(),
-          })
+          }),
         );
         const myData = [
           {
             id: DAILY_BALANCE,
-            color: tokens("dark").greenAccent[500],
+            color: tokens('dark').greenAccent[500],
             data: violationData.map((item) => ({
               x: new Date(item.date.seconds * 1000).toDateString(),
               y: item.dailyBalance,
@@ -78,11 +72,12 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
           },
         ];
         setViolation(myData);
-        return `accounts/${accountId}/${DAILY_BALANCE}`;
+        path = `accounts/${accountId}/${DAILY_BALANCE}`;
       }
     } catch (err) {
       console.error(err);
     }
+    return path;
   };
 
   useEffect(() => {
@@ -103,7 +98,7 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
         endOfToday.setHours(23, 59, 59, 999);
 
         const q = query(
-          collection(db, `accounts/${accountId}/${DAILY_BALANCE}`)
+          collection(db, `accounts/${accountId}/${DAILY_BALANCE}`),
         );
 
         observer = onSnapshot(
@@ -113,8 +108,8 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
               `Daily Balnace Received query snapshot ${JSON.stringify(
                 querySnapshot.size,
                 null,
-                2
-              )}`
+                2,
+              )}`,
             );
 
             // @ts-expect-error avoid this eror
@@ -122,12 +117,12 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
               (doc) => ({
                 id: doc.id,
                 ...doc.data(),
-              })
+              }),
             );
             const myData = [
               {
                 id: DAILY_BALANCE,
-                color: tokens("dark").greenAccent[500],
+                color: tokens('dark').greenAccent[500],
                 data: violationData.map((item) => ({
                   x: new Date(item.date.seconds * 1000).toDateString(),
                   y: item.dailyBalance,
@@ -138,7 +133,7 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
-          }
+          },
         );
       }
     });
@@ -186,13 +181,15 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
           },
         },
       }}
-      colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
-      margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-      xScale={{ type: "point" }}
+      colors={isDashboard ? { datum: 'color' } : { scheme: 'nivo' }} // added
+      margin={{
+        top: 50, right: 110, bottom: 50, left: 60,
+      }}
+      xScale={{ type: 'point' }}
       yScale={{
-        type: "linear",
-        min: "auto",
-        max: "auto",
+        type: 'linear',
+        min: 'auto',
+        max: 'auto',
         stacked: true,
         reverse: false,
       }}
@@ -204,47 +201,47 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
+        legend: isDashboard ? undefined : 'transportation', // added
         legendOffset: 36,
-        legendPosition: "middle",
+        legendPosition: 'middle',
       }}
       axisLeft={{
         tickValues: 5, // added
         tickSize: 3,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "count", // added
+        legend: isDashboard ? undefined : 'count', // added
         legendOffset: -40,
-        legendPosition: "middle",
+        legendPosition: 'middle',
       }}
       enableGridX={false}
       enableGridY={false}
       pointSize={8}
-      pointColor={{ theme: "background" }}
+      pointColor={{ theme: 'background' }}
       pointBorderWidth={2}
-      pointBorderColor={{ from: "serieColor" }}
+      pointBorderColor={{ from: 'serieColor' }}
       pointLabelYOffset={-12}
-      useMesh={true}
+      useMesh
       legends={[
         {
-          anchor: "bottom-right",
-          direction: "column",
+          anchor: 'bottom-right',
+          direction: 'column',
           justify: false,
           translateX: 100,
           translateY: 0,
           itemsSpacing: 0,
-          itemDirection: "left-to-right",
+          itemDirection: 'left-to-right',
           itemWidth: 80,
           itemHeight: 20,
           itemOpacity: 0.75,
           symbolSize: 12,
-          symbolShape: "circle",
-          symbolBorderColor: "rgba(0, 0, 0, .5)",
+          symbolShape: 'circle',
+          symbolBorderColor: 'rgba(0, 0, 0, .5)',
           effects: [
             {
-              on: "hover",
+              on: 'hover',
               style: {
-                itemBackground: "rgba(0, 0, 0, .03)",
+                itemBackground: 'rgba(0, 0, 0, .03)',
                 itemOpacity: 1,
               },
             },
@@ -253,6 +250,10 @@ const LineChart: React.FC<Props> = ({ accountId, isDashboard = false }) => {
       ]}
     />
   );
+}
+LineChart.defaultProps = {
+  isDashboard: false,
 };
+LineChart.displayName = 'LineChart';
 
 export default LineChart;

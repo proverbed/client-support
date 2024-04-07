@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_APP_ID,
-  measurementId: import.meta.env.VITE_MEASUREMENT_ID
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -20,17 +20,17 @@ export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => {
-    signInWithPopup(auth, provider).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
-    });
+  signInWithPopup(auth, provider).then((result) => {
+    console.log(result);
+  }).catch((error) => {
+    console.log(error);
+  });
 };
 
-const db = getFirestore(app)
+const db = getFirestore(app);
 
 if (!import.meta.env.PROD) {
-    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
 }
 
 export { db };

@@ -1,16 +1,16 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import BarChart from "../../components/BarChart";
-import ProgressCircle from "../../components/ProgressCircle";
-import NumberTradesToday from "../../components/NumberTradesToday";
-import TradeBalanceToday from "../../components/TradeBalanceToday";
-import ViolationToday from "../../components/ViolationToday";
-import ViolationTodayList from "../../components/ViolationTodayList";
-import { useParams } from "react-router-dom";
-import WinRate from "../../components/WinRate";
-import WinsLosses from "../../components/WinsLosses";
+import { Box, Typography, useTheme } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { tokens } from '../../theme';
+import Header from '../../components/Header';
+import LineChart from '../../components/LineChart';
+import BarChart from '../../components/BarChart';
+import ProgressCircle from '../../components/ProgressCircle';
+import NumberTradesToday from '../../components/NumberTradesToday';
+import TradeBalanceToday from '../../components/TradeBalanceToday';
+import ViolationToday from '../../components/ViolationToday';
+import ViolationTodayList from '../../components/ViolationTodayList';
+import WinRate from '../../components/WinRate';
+import WinsLosses from '../../components/WinsLosses';
 
 export interface NumTradesProps {
   id?: string;
@@ -18,14 +18,14 @@ export interface NumTradesProps {
   numberTrades: number;
 }
 
-const AccountDashboard = () => {
+function AccountDashboard() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { accountId } = useParams<{
     accountId: string;
   }>();
 
-  const myAccountId = accountId !== undefined ? accountId : "";
+  const myAccountId = accountId !== undefined ? accountId : '';
 
   return (
     <Box m="20px">
@@ -80,7 +80,7 @@ const AccountDashboard = () => {
             </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} accountId={myAccountId} />
+            <LineChart isDashboard accountId={myAccountId} />
           </Box>
         </Box>
         <Box
@@ -112,7 +112,7 @@ const AccountDashboard = () => {
             <Typography
               variant="h5"
               color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
+              sx={{ mt: '15px' }}
             >
               $48,352 revenue generated
             </Typography>
@@ -127,17 +127,17 @@ const AccountDashboard = () => {
           <Typography
             variant="h5"
             fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
+            sx={{ padding: '30px 30px 0 30px' }}
           >
             Sales Quantity
           </Typography>
           <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
+            <BarChart isDashboard />
           </Box>
         </Box>
       </Box>
     </Box>
   );
-};
+}
 
 export default AccountDashboard;
