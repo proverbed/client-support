@@ -126,9 +126,7 @@ function BarChart({ isDashboard = false }: Props) {
         },
       ]}
       role="application"
-      barAriaLabel={function (e) {
-        return `${e.id}: ${e.formattedValue} in country: ${e.indexValue}`;
-      }}
+      barAriaLabel={(e) => `${e.id}: ${e.formattedValue} in country: ${e.indexValue}`}
     />
   );
 }

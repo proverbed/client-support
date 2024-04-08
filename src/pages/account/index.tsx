@@ -7,7 +7,6 @@ import {
   GridRowModes,
   DataGrid,
   GridColDef,
-  GridToolbarContainer,
   GridActionsCellItem,
   GridEventListener,
   GridRowId,
@@ -24,14 +23,13 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-import { randomId } from '@mui/x-data-grid-generator';
 import { db } from '../../config/Firebase.ts';
 import Header from '../../components/Header.tsx';
 import { tokens } from '../../theme.ts';
+import EditToolbar from '../../components/EditToolbar.tsx';
 
 export interface AccountProps {
   isNew: boolean;
@@ -42,13 +40,6 @@ export interface AccountProps {
   drawdownLimit: number;
   profitTarget: number;
   riskPerTrade: number;
-}
-
-interface EditToolbarProps {
-  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel
-  ) => void;
 }
 
 function Account() {
@@ -162,27 +153,6 @@ function Account() {
   }, []);
 
   const colors = tokens(theme.palette.mode);
-
-  function EditToolbar(props: EditToolbarProps) {
-    const { setRows, setRowModesModel } = props;
-
-    const handleClick = () => {
-      const id = randomId();
-      setRows((oldRows) => [...oldRows, { id, name: '', isNew: true }]);
-      setRowModesModel((oldModel) => ({
-        ...oldModel,
-        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-      }));
-    };
-
-    return (
-      <GridToolbarContainer>
-        <Button color="inherit" startIcon={<AddIcon />} onClick={handleClick}>
-          Add record
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', align: 'left' },
