@@ -1,16 +1,16 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { tokens } from '../../theme';
-import Header from '../../components/Header';
-import LineChart from '../../components/LineChart';
-import BarChart from '../../components/BarChart';
-import ProgressCircle from '../../components/ProgressCircle';
-import NumberTradesToday from '../../components/NumberTradesToday';
-import TradeBalanceToday from '../../components/TradeBalanceToday';
-import ViolationToday from '../../components/ViolationToday';
-import ViolationTodayList from '../../components/ViolationTodayList';
-import WinRate from '../../components/WinRate';
-import WinsLosses from '../../components/WinsLosses';
+import { tokens } from '../../theme.ts';
+import Header from '../../components/Header.tsx';
+import LineChart from '../../components/LineChart.tsx';
+import BarChart from '../../components/BarChart.tsx';
+import ProgressCircle from '../../components/ProgressCircle.tsx';
+import NumberTradesToday from '../../components/NumberTradesToday.tsx';
+import TradeBalanceToday from '../../components/TradeBalanceToday.tsx';
+import ViolationToday from '../../components/ViolationToday.tsx';
+import ViolationTodayList from '../../components/ViolationTodayList.tsx';
+import WinRate from '../../components/WinRate.tsx';
+import WinsLosses from '../../components/WinsLosses.tsx';
 
 export interface NumTradesProps {
   id?: string;

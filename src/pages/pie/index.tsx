@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import Header from '../../components/Header';
-import PieChart from '../../components/PieChart';
+import Header from '../../components/Header.tsx';
+import PieChart from '../../components/PieChart.tsx';
 
 function Pie() {
   return (
@@ -12,5 +12,6 @@ function Pie() {
     </Box>
   );
 }
+Pie.displayName = 'Pie';
 
 export default Pie;

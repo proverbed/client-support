@@ -1,8 +1,8 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { tokens } from '../../theme';
-import { mockDataInvoices } from '../../data/mockData';
-import Header from '../../components/Header';
+import { tokens } from '../../theme.ts';
+import { mockDataInvoices } from '../../data/mockData.ts';
+import Header from '../../components/Header.tsx';
 
 function Invoices() {
   const theme = useTheme();

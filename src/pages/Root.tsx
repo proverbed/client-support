@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { ColorModeContext, useMode } from '../theme';
-import Topbar from './global/Topbar';
-import Sidebar from './global/Sidebar';
-import { UserAuth } from '../store/AuthContext';
+import { ColorModeContext, useMode } from '../theme.ts';
+import Topbar from './global/Topbar.tsx';
+import Sidebar from './global/Sidebar.tsx';
+import { UserAuth } from '../store/AuthContext.tsx';
 
 function RootLayout() {
   const [theme, colorMode] = useMode();

@@ -14,8 +14,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import Header from '../../components/Header';
-import { tokens } from '../../theme';
+import Header from '../../components/Header.tsx';
+import { tokens } from '../../theme.ts';
 
 function Calendar() {
   const theme = useTheme();

@@ -4,8 +4,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Header from '../../components/Header';
-import { tokens } from '../../theme';
+import Header from '../../components/Header.tsx';
+import { tokens } from '../../theme.ts';
 
 function FAQ() {
   const theme = useTheme();

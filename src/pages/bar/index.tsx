@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import Header from '../../components/Header';
-import BarChart from '../../components/BarChart';
+import Header from '../../components/Header.tsx';
+import BarChart from '../../components/BarChart.tsx';
 
 function Bar() {
   return (

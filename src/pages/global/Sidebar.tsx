@@ -3,7 +3,6 @@ import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import {
   Box, IconButton, Button, Typography, useTheme,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import 'react-pro-sidebar/dist/css/styles.css';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
@@ -15,36 +14,9 @@ import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutlined';
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
-import { tokens } from '../../theme';
-import { UserAuth } from '../../store/AuthContext';
-
-type Props = {
-  title: string;
-  to: string;
-  icon: JSX.Element;
-  selected: string;
-  setSelected: (title: string) => void;
-};
-
-const Item: React.FC<Props> = ({
-  title, to, icon, selected, setSelected,
-}) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  return (
-    <MenuItem
-      active={selected === title}
-      style={{
-        color: colors.grey[100],
-      }}
-      onClick={() => setSelected(title)}
-      icon={icon}
-    >
-      <Typography>{title}</Typography>
-      <Link to={to} />
-    </MenuItem>
-  );
-};
+import { tokens } from '../../theme.ts';
+import { UserAuth } from '../../store/AuthContext.tsx';
+import SitebarItem from './SidebarItem.tsx';
 
 function Sidebar() {
   const theme = useTheme();
@@ -136,7 +108,7 @@ function Sidebar() {
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : '10%'}>
-            <Item
+            <SitebarItem
               title="Dashboard"
               to="/dash"
               icon={<HomeOutlinedIcon />}
@@ -151,21 +123,21 @@ function Sidebar() {
             >
               Data
             </Typography>
-            <Item
+            <SitebarItem
               title="Manage Account"
               to="/account"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            <SitebarItem
               title="Contacts Information"
               to="/contacts"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            <SitebarItem
               title="Invoices Balances"
               to="/invoices"
               icon={<ReceiptOutlinedIcon />}
@@ -180,14 +152,14 @@ function Sidebar() {
             >
               Pages
             </Typography>
-            <Item
+            <SitebarItem
               title="Profile Form"
               to="/form"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            <SitebarItem
               title="Calendar"
               to="/calendar"
               icon={<CalendarTodayOutlinedIcon />}
@@ -202,21 +174,21 @@ function Sidebar() {
             >
               Charts
             </Typography>
-            <Item
+            <SitebarItem
               title="Bar Chart"
               to="/bar"
               icon={<BarChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            <SitebarItem
               title="Pie Chart"
               to="/pie"
               icon={<PieChartOutlineOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            <SitebarItem
               title="Line Chart"
               to="/line"
               icon={<TimelineOutlinedIcon />}
@@ -244,5 +216,6 @@ function Sidebar() {
     </Box>
   );
 }
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

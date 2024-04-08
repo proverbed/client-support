@@ -3,17 +3,17 @@ import {
 } from '@mui/material';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import TrafficIcon from '@mui/icons-material/Traffic';
-import { tokens } from '../../theme';
-import Header from '../../components/Header';
-import LineChart from '../../components/LineChart';
-import BarChart from '../../components/BarChart';
-import StatBox from '../../components/StatBox';
-import ProgressCircle from '../../components/ProgressCircle';
-import NumberTradesToday from '../../components/NumberTradesToday';
-import TradeBalanceToday from '../../components/TradeBalanceToday';
-import ViolationToday from '../../components/ViolationToday';
-import ViolationTodayList from '../../components/ViolationTodayList';
-import { configSettings } from '../../config/config';
+import { tokens } from '../../theme.ts';
+import Header from '../../components/Header.tsx';
+import LineChart from '../../components/LineChart.tsx';
+import BarChart from '../../components/BarChart.tsx';
+import StatBox from '../../components/StatBox.tsx';
+import ProgressCircle from '../../components/ProgressCircle.tsx';
+import NumberTradesToday from '../../components/NumberTradesToday.tsx';
+import TradeBalanceToday from '../../components/TradeBalanceToday.tsx';
+import ViolationToday from '../../components/ViolationToday.tsx';
+import ViolationTodayList from '../../components/ViolationTodayList.tsx';
+import CONFIG_SETTINGS from '../../config/config.ts';
 
 export interface NumTradesProps {
   id?: string;
@@ -26,9 +26,9 @@ function Dashboard() {
   const colors = tokens(theme.palette.mode);
 
   const myEnv = import.meta.env.PROD ? 'prod' : 'dev';
-  const numTradesAccountId = configSettings['num-trades-today'][myEnv].accountId;
-  const tradeBalancecAccountId = configSettings['trade-balance-today'][myEnv].accountId;
-  const violationTodayAccountId = configSettings['violation-today'][myEnv].accountId;
+  const numTradesAccountId = CONFIG_SETTINGS['num-trades-today'][myEnv].accountId;
+  const tradeBalancecAccountId = CONFIG_SETTINGS['trade-balance-today'][myEnv].accountId;
+  const violationTodayAccountId = CONFIG_SETTINGS['violation-today'][myEnv].accountId;
 
   return (
     <Box m="20px">

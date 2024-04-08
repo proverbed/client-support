@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { db } from '../config/Firebase';
+import { db } from '../config/Firebase.ts';
 
 export interface TradeProps {
     id?: string,
@@ -26,7 +26,7 @@ function TradeDetailsPage() {
       const docSnap = await getDoc(doc(db, `trades/${tradeId}`));
 
       if (docSnap.exists()) {
-        // @ts-ignore
+        // @ts-expect-error error - need to relook this
         setTradeDetails({ id: docSnap.id, ...docSnap.data() });
       } else {
         console.log('No such document!');

@@ -1,7 +1,7 @@
 import {
   useContext, createContext,
 } from 'react';
-import { UserType } from './AuthContextProvider.tsx';
+import { UserType } from './dto/UserType.ts';
 
 type UserContextType = {
   user: UserType;

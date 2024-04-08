@@ -64,6 +64,7 @@ function Account() {
     event,
   ) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      // eslint-disable-next-line no-param-reassign
       event.defaultMuiPrevented = true;
     }
   };
@@ -145,9 +146,9 @@ function Account() {
     try {
       const querySnapshot = await getDocs(collection(db, 'accounts'));
       // @ts-expect-error avoid this eror
-      const accountData: AccountProps[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      const accountData: AccountProps[] = querySnapshot.docs.map((document) => ({
+        id: document.id,
+        ...document.data(),
       }));
       // @ts-expect-error avoid this eror
       setRows(accountData);

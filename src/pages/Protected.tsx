@@ -1,7 +1,12 @@
 import { Navigate } from 'react-router-dom';
+import React from 'react';
 import { UserAuth } from '../store/AuthContext.tsx';
 
-function Protected({ children }: { children?: React.ReactNode }) {
+type Props = {
+  children?: React.ReactNode,
+};
+
+function Protected({ children }: Props) {
   const { user } = UserAuth();
 
   if (!user) {
@@ -9,5 +14,8 @@ function Protected({ children }: { children?: React.ReactNode }) {
   }
   return children;
 }
+Protected.defaultProps = {
+  children: null,
+};
 
 export default Protected;

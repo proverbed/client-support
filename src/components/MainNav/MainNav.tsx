@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { UserAuth } from '../../store/AuthContext';
+import { UserAuth } from '../../store/AuthContext.tsx';
 
 export default function MainNav() {
   const { googleSignIn, user, logOut } = UserAuth();
@@ -28,8 +28,8 @@ export default function MainNav() {
             <title>menu</title>
             <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
           </svg>
+          <input className="hidden" type="checkbox" id="menu-toggle" name="menu-toggle" />
         </label>
-        <input className="hidden" type="checkbox" id="menu-toggle" />
 
         <div className="hidden md:flex md:items-center md:w-auto w-full order-3 md:order-1" id="menu">
           <nav>
@@ -48,10 +48,10 @@ export default function MainNav() {
           <div className="auth flex items-center w-full md:w-full">
             {user?.displayName
               ? (
-                <button onClick={handleSignOut} className="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">Logout</button>
+                <button type="button" onClick={handleSignOut} className="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">Logout</button>
               )
               : (
-                <button className="bg-blue-600 text-gray-200  p-2 rounded  hover:bg-blue-500 hover:text-gray-100" onClick={handleGoogleSignIn}>Sign in</button>
+                <button type="button" className="bg-blue-600 text-gray-200  p-2 rounded  hover:bg-blue-500 hover:text-gray-100" onClick={handleGoogleSignIn}>Sign in</button>
               )}
           </div>
         </div>

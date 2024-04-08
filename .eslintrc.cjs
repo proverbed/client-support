@@ -5,17 +5,21 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
-    'airbnb'
+    'plugin:import/typescript',
+    'airbnb',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs', "vite.config.ts"],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
-    "react/react-in-jsx-scope": "off",
+    'no-unused-vars': 'off',
+    'no-unresolved': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
+    'react/react-in-jsx-scope': 'off',
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }]
-  }
-}
+    'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
+  },
+};
