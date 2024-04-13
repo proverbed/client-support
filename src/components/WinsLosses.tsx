@@ -56,7 +56,7 @@ function WinsLosses({ accountId }: Props) {
         }));
         console.log('trades Data: ', winRate(tradeData));
 
-        setWinslosses(winRate(tradeData));
+        setWinslosses([Number(winRate(tradeData))]);
         path = `accounts/${accountId}/${TRADES}`;
       }
       setWinslosses([0, 0]);
@@ -98,7 +98,7 @@ function WinsLosses({ accountId }: Props) {
               ...doc.data(),
             }));
 
-            setWinslosses(winRate(tradeData));
+            setWinslosses([Number(winRate(tradeData))]);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
