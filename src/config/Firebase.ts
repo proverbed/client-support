@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { connectAuthEmulator, getAuth, GoogleAuthProvider, signInWithPopup 
+} from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -15,7 +16,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
 
@@ -28,9 +29,9 @@ export const signInWithGoogle = () => {
 };
 
 const db = getFirestore(app);
-
 if (!import.meta.env.PROD) {
   connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099');
 }
 
-export { db };
+export { db, auth };

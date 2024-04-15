@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { db } from '../config/Firebase.ts';
 import { tokens } from '../theme.ts';
 import StatsBox from './StatsBox.tsx';
-import winRate from '../util/math.ts';
 
 export interface TradesProps {
   id?: string;
@@ -32,6 +31,7 @@ function WinsLosses({ accountId }: Props) {
   const [winslosses, setWinslosses] = useState<number[]>([]);
   const TRADES = 'trades';
 
+  // Query trade data for useEffect.
   const getNumberOfViolations = async () => {
     let path = '';
     try {
@@ -54,9 +54,13 @@ function WinsLosses({ accountId }: Props) {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log('trades Data: ', winRate(tradeData));
 
-        setWinslosses([Number(winRate(tradeData))]);
+        setWinslosses(
+          [
+            tradeData.filter((x) => x.profit > 0).length,
+            tradeData.filter((x) => x.profit <= 0).length,
+          ],
+        );
         path = `accounts/${accountId}/${TRADES}`;
       }
       setWinslosses([0, 0]);
@@ -74,6 +78,7 @@ function WinsLosses({ accountId }: Props) {
       return pathVar;
     })();
 
+    // Subscribe to data.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let observer: any;
     pathResult.then((value) => {
@@ -98,7 +103,12 @@ function WinsLosses({ accountId }: Props) {
               ...doc.data(),
             }));
 
-            setWinslosses([Number(winRate(tradeData))]);
+            setWinslosses(
+              [
+                tradeData.filter((x) => x.profit > 0).length,
+                tradeData.filter((x) => x.profit <= 0).length,
+              ],
+            );
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
