@@ -19,8 +19,10 @@ import {
   getDocs,
   collection,
   doc,
+  where,
   updateDoc,
   setDoc,
+  query,
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -30,6 +32,7 @@ import { db } from '../../config/Firebase.ts';
 import Header from '../../components/Header.tsx';
 import { tokens } from '../../theme.ts';
 import EditToolbar from '../../components/EditToolbar.tsx';
+import { UserAuth } from '../../store/AuthContext.tsx';
 
 export interface AccountProps {
   isNew: boolean;
@@ -43,6 +46,7 @@ export interface AccountProps {
 }
 
 function Account() {
+  const { user } = UserAuth();
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -99,6 +103,7 @@ function Account() {
     const updateData = {
       ...newRow,
       magic: Number(newRow.magic),
+      user: user.uid,
     };
 
     // @ts-expect-error avoid this eror
@@ -135,7 +140,13 @@ function Account() {
 
   const getAccountList = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'accounts'));
+      const q = query(
+        collection(db, 'accounts'),
+        where('user', '==', user.uid),
+      );
+
+      const querySnapshot = await getDocs(q);
+
       // @ts-expect-error avoid this eror
       const accountData: AccountProps[] = querySnapshot.docs.map((document) => ({
         id: document.id,

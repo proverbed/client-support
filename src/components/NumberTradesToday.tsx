@@ -54,7 +54,7 @@ function NumberTradesToday({ accountId }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let observer: any;
     pathResult.then((value) => {
-      if (value !== undefined) {
+      if (value !== undefined && value !== '') {
         observer = onSnapshot(
           doc(db, value),
           (querySnapshot) => {
