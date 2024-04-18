@@ -590,7 +590,8 @@ const createTrade = functions.firestore
       const numTradesRef = `accounts/${context.params.accountId}/numTrades`;
       const numTradesSnapshot = await db
         .collection(numTradesRef)
-        .doc(moment(new Date()).format('YYYY-MM-DD'));
+        .doc(moment.utc(new Date()).format('YYYY-MM-DD'))
+        .get();
 
       const tradeSnapshopToday = await db
         .collection(`accounts/${context.params.accountId}/trades`)
@@ -602,21 +603,21 @@ const createTrade = functions.firestore
         numberTrades: tradeSnapshopToday.size,
       };
 
-      if (numTradesSnapshot.exists) {
+      if (!numTradesSnapshot.exists) {
         debug(
           "No matching documents for numTrades today -> need to create an entry"
         );
         const writeBatch = db.batch();
         const createDocRef = db
           .collection(`accounts/${context.params.accountId}/numTrades`)
-          .doc(moment(endOfToday).format('YYYY-MM-DD'));
+          .doc(moment.utc(endOfToday).format('YYYY-MM-DD'));
 
         writeBatch.create(createDocRef, updateData);
         writeBatch.commit().then(() => {
           info("Successfully executed batch.");
         });
       } else {
-        const updatePath = numTradesRef + "/" + numTradesSnapshot.docs[0].id;
+        const updatePath = `${numTradesRef}/${moment.utc(endOfToday).format('YYYY-MM-DD')}`;
         debug(`Updating number of trades record: ${updatePath}`);
 
         const documentRef = db.doc(updatePath);
@@ -650,8 +651,7 @@ const accountDailyBalance = functions.firestore
 
       const numTradesSnapshot = await db
         .collection(numTradesRef)
-        .where("date", ">=", startOfToday)
-        .where("date", "<=", endOfToday)
+        .doc(moment.utc(new Date()).format('YYYY-MM-DD'))
         .get();
 
       const tradeSnapshopToday = await db
@@ -683,21 +683,21 @@ const accountDailyBalance = functions.firestore
         dailyBalance: balance,
       };
 
-      if (numTradesSnapshot.empty) {
+      if (!numTradesSnapshot.exists) {
         debug(
           `No matching documents for ${DAILY_BALANCE}} today -> need to create an entry`
         );
         const writeBatch = db.batch();
         const createDocRef = db
           .collection(`accounts/${context.params.accountId}/${DAILY_BALANCE}`)
-          .doc(moment(endOfToday).format('YYYY-MM-DD'));
+          .doc(moment.utc(endOfToday).format('YYYY-MM-DD'));
 
         writeBatch.create(createDocRef, updateData);
         writeBatch.commit().then(() => {
           info("Successfully executed batch.");
         });
       } else {
-        const updatePath = numTradesRef + "/" + numTradesSnapshot.docs[0].id;
+        const updatePath = numTradesRef + "/" + moment.utc(endOfToday).format('YYYY-MM-DD');
         debug(`Updating ${DAILY_BALANCE} record: ${updatePath}`);
 
         const documentRef = db.doc(updatePath);

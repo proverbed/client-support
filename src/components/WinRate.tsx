@@ -54,7 +54,7 @@ function WinRate({ accountId }: Props) {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log('trades Data: ', winRate(tradeData));
+        console.log(' trades Data: ', winRate(tradeData), tradeData);
 
         setWinrate(winRate(tradeData));
         path = `accounts/${accountId}/${TRADES}`;
@@ -96,11 +96,12 @@ function WinRate({ accountId }: Props) {
               id: doc.id,
               ...doc.data(),
             }));
+            console.log('subscription trades Data: ', winRate(tradeData), tradeData);
 
             setWinrate(winRate(tradeData));
           },
           (err) => {
-            console.log(`Encountered error: ${err}`);
+            console.error(`Encountered error: ${err}`);
           },
         );
       }

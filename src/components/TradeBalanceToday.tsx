@@ -9,6 +9,7 @@ import moment from 'moment';
 import { db } from '../config/Firebase.ts';
 import { tokens } from '../theme.ts';
 import StatBox from './StatBox.tsx';
+import CONST from '../global/Const.ts';
 
 type Props = {
   accountId: string;
@@ -19,19 +20,15 @@ function TradeBalanceToday({ accountId }: Props) {
   const colors = tokens(theme.palette.mode);
 
   const [balance, setBalance] = useState<number>(0);
-  const DAILY_BALANCE = 'dailyBalance';
 
   const getDailyBalance = async () => {
     let path = '';
     try {
-      path = `accounts/${accountId}/${DAILY_BALANCE}/${moment(new Date()).format('YYYY-MM-DD')}`;
+      path = `accounts/${accountId}/${CONST.DB.DAILY_BALANCE}/${moment.utc(new Date()).format('YYYY-MM-DD')}`;
       const querySnapshot = await getDoc(doc(db, path));
 
-      console.log('path', querySnapshot.data());
-
-      if (querySnapshot.data() && querySnapshot.data() !== undefined) {
+      if (querySnapshot.data() !== undefined) {
         setBalance(querySnapshot.data()!.dailyBalance);
-        // path = `accounts/${accountId}/${DAILY_BALANCE}/${querySnapshot.docs[0].id}`;
       }
     } catch (err) {
       console.error(err);
@@ -54,17 +51,12 @@ function TradeBalanceToday({ accountId }: Props) {
         observer = onSnapshot(
           doc(db, value),
           (querySnapshot) => {
-            console.log(
-              `Received query snapshot ${JSON.stringify(
-                querySnapshot.data(),
-                null,
-                2,
-              )}`,
-            );
-            setBalance(querySnapshot.data()?.dailyBalance);
+            if (querySnapshot.data() !== undefined) {
+              setBalance(querySnapshot.data()!.dailyBalance);
+            }
           },
           (err) => {
-            console.log(`Encountered error: ${err}`);
+            console.error(`Encountered error: ${err}`);
           },
         );
       }
@@ -86,7 +78,7 @@ function TradeBalanceToday({ accountId }: Props) {
       justifyContent="center"
     >
       <StatBox
-        title={`$${balance}`}
+        title={`$${balance.toFixed(2)}`}
         subtitle="Trade balance for Today"
         progress={0.75}
         increase="+14%"
