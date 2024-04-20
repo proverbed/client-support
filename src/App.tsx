@@ -12,7 +12,6 @@ import FAQ from './pages/faq/index.tsx';
 import Form from './pages/form/index.tsx';
 import Calendar from './pages/calendar/calendar.tsx';
 import Bar from './pages/bar/index.tsx';
-import Line from './pages/line/index.tsx';
 import Pie from './pages/pie/index.tsx';
 import Dashboard from './pages/dashboard/index.tsx';
 import AccountDashboard from './pages/accountDashboard/index.tsx';
