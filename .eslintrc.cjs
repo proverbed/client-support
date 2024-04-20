@@ -8,7 +8,7 @@ module.exports = {
     'plugin:import/typescript',
     'airbnb',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts', 'functions'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {

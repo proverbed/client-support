@@ -1,12 +1,15 @@
 import { Box, useTheme } from '@mui/material';
 import {
-  query, where, getDocs, collection, onSnapshot, doc,
+  onSnapshot, doc,
+  getDoc,
 } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import BalanceIcon from '@mui/icons-material/Balance';
+import moment from 'moment';
 import { db } from '../config/Firebase.ts';
 import { tokens } from '../theme.ts';
 import StatBox from './StatBox.tsx';
+import CONST from '../global/Const.ts';
 
 type Props = {
   accountId: string;
@@ -17,27 +20,15 @@ function TradeBalanceToday({ accountId }: Props) {
   const colors = tokens(theme.palette.mode);
 
   const [balance, setBalance] = useState<number>(0);
-  const DAILY_BALANCE = 'dailyBalance';
 
-  const getNumberOfTrades = async () => {
+  const getDailyBalance = async () => {
     let path = '';
     try {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
-      const endOfToday = new Date();
-      endOfToday.setHours(23, 59, 59, 999);
+      path = `accounts/${accountId}/${CONST.DB.DAILY_BALANCE}/${moment.utc(new Date()).format('YYYY-MM-DD')}`;
+      const querySnapshot = await getDoc(doc(db, path));
 
-      const q = query(
-        collection(db, `accounts/${accountId}/${DAILY_BALANCE}`),
-        where('date', '>=', startOfToday),
-        where('date', '<=', endOfToday),
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        setBalance(querySnapshot.docs[0].data().dailyBalance);
-        path = `accounts/${accountId}/${DAILY_BALANCE}/${querySnapshot.docs[0].id}`;
+      if (querySnapshot.data() !== undefined) {
+        setBalance(querySnapshot.data()!.dailyBalance);
       }
     } catch (err) {
       console.error(err);
@@ -49,28 +40,23 @@ function TradeBalanceToday({ accountId }: Props) {
     let pathVar;
     // let unsubscribe;
     const pathResult = (async () => {
-      pathVar = await getNumberOfTrades();
+      pathVar = await getDailyBalance();
       return pathVar;
     })();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let observer: any;
     pathResult.then((value) => {
-      if (value !== undefined) {
+      if (value !== undefined && value !== '') {
         observer = onSnapshot(
           doc(db, value),
           (querySnapshot) => {
-            console.log(
-              `Received query snapshot ${JSON.stringify(
-                querySnapshot.data(),
-                null,
-                2,
-              )}`,
-            );
-            setBalance(querySnapshot.data()?.dailyBalance);
+            if (querySnapshot.data() !== undefined) {
+              setBalance(querySnapshot.data()!.dailyBalance);
+            }
           },
           (err) => {
-            console.log(`Encountered error: ${err}`);
+            console.error(`Encountered error: ${err}`);
           },
         );
       }
@@ -92,7 +78,7 @@ function TradeBalanceToday({ accountId }: Props) {
       justifyContent="center"
     >
       <StatBox
-        title={`$${balance}`}
+        title={`$${balance.toFixed(2)}`}
         subtitle="Trade balance for Today"
         progress={0.75}
         increase="+14%"

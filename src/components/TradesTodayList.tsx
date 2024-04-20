@@ -7,31 +7,35 @@ import { db } from '../config/Firebase.ts';
 import { tokens } from '../theme.ts';
 import CONST from '../global/Const.ts';
 
-export interface ViolationProps {
+export interface TradesTodayProps {
   id?: string;
   date: {
     seconds: number;
     nanoseconds: number;
   };
   type: string;
-  ticket?: string;
-  numberTrades?: number;
-  risk?: number;
-  riskPerTrade?: number;
-  ticketList?: string;
+  instrument: string;
+  ticket: string;
+  profit: number;
+  risk: number;
+  volume: number;
+  balance: number;
+  tp: string;
+  sl: string;
+  entry: string;
 }
 
 type Props = {
   accountId: string;
 };
 
-function ViolationTodayList({ accountId }: Props) {
+function TradesTodayList({ accountId }: Props) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [violation, setViolation] = useState<ViolationProps[]>([]);
+  const [trades, setTrades] = useState<TradesTodayProps[]>([]);
 
-  const getNumberOfViolations = async () => {
+  const getNumberOfTrades = async () => {
     let path = '';
     try {
       const startOfToday = new Date();
@@ -40,7 +44,7 @@ function ViolationTodayList({ accountId }: Props) {
       endOfToday.setHours(23, 59, 59, 999);
 
       const q = query(
-        collection(db, `accounts/${accountId}/${CONST.DB.VIOLATION}`),
+        collection(db, `accounts/${accountId}/${CONST.DB.TRADES}`),
         where('date', '>=', startOfToday),
         where('date', '<=', endOfToday),
       );
@@ -49,18 +53,16 @@ function ViolationTodayList({ accountId }: Props) {
 
       if (!querySnapshot.empty) {
         // @ts-expect-error avoid this eror
-        const violationData: ViolationProps[] = querySnapshot.docs.map(
+        const tradesTodayData: TradesTodayProps[] = querySnapshot.docs.map(
           (doc) => ({
             id: doc.id,
             ...doc.data(),
           }),
         );
-        console.log('violationData: ', violationData);
+        console.log('tradesTodayData: ', tradesTodayData);
 
-        setViolation(violationData);
-        // const path =
-        //   `accounts/${accountId}/${VIOLATION}/` + querySnapshot.docs[0].id;
-        path = `accounts/${accountId}/${CONST.DB.VIOLATION}`;
+        setTrades(tradesTodayData);
+        path = `accounts/${accountId}/${CONST.DB.TRADES}`;
       }
     } catch (err) {
       console.error(err);
@@ -72,7 +74,7 @@ function ViolationTodayList({ accountId }: Props) {
     let pathVar;
     // let unsubscribe;
     const pathResult = (async () => {
-      pathVar = await getNumberOfViolations();
+      pathVar = await getNumberOfTrades();
       return pathVar;
     })();
 
@@ -86,17 +88,16 @@ function ViolationTodayList({ accountId }: Props) {
         endOfToday.setHours(23, 59, 59, 999);
 
         const q = query(
-          collection(db, `accounts/${accountId}/${CONST.DB.VIOLATION}`),
+          collection(db, `accounts/${accountId}/${CONST.DB.TRADES}`),
           where('date', '>=', startOfToday),
           where('date', '<=', endOfToday),
         );
 
-        console.log(value);
         observer = onSnapshot(
           q,
           (querySnapshot) => {
             console.log(
-              `ViolationsList Received query snapshot ${JSON.stringify(
+              `TradesList Received query snapshot ${JSON.stringify(
                 querySnapshot.size,
                 null,
                 2,
@@ -104,14 +105,14 @@ function ViolationTodayList({ accountId }: Props) {
             );
 
             // @ts-expect-error avoid this eror
-            const violationData: ViolationProps[] = querySnapshot.docs.map(
+            const tradesData: TradesTodayProps[] = querySnapshot.docs.map(
               (doc) => ({
                 id: doc.id,
                 ...doc.data(),
               }),
             );
 
-            setViolation(violationData);
+            setTrades(tradesData);
           },
           (err) => {
             console.log(`Encountered error: ${err}`);
@@ -137,10 +138,10 @@ function ViolationTodayList({ accountId }: Props) {
         p="15px"
       >
         <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-          Recent Violations
+          Recent Trades
         </Typography>
       </Box>
-      {violation.map((item, i) => (
+      {trades.map((item, i) => (
         <Box
           // eslint-disable-next-line react/no-array-index-key
           key={`${item.id}-${i}`}
@@ -156,26 +157,18 @@ function ViolationTodayList({ accountId }: Props) {
               variant="h5"
               fontWeight="600"
             >
-              {item.id?.substring(0, 5)}
+              {item.ticket}
             </Typography>
-            <Typography color={colors.grey[100]}>{item.ticket}</Typography>
-            {item.risk && (
-              <Typography
-                color={colors.grey[100]}
-              >
-                {`${item.risk}:${item.riskPerTrade}`}
-              </Typography>
-            )}
-            {item.ticketList && (
-              <Typography
-                color={colors.grey[100]}
-              >
-                {`${item.ticketList}`}
-              </Typography>
-            )}
+            <Typography color={colors.grey[100]}>{item.instrument}</Typography>
           </Box>
           <Box color={colors.grey[100]}>
-            {new Date(item.date.seconds * 1000).toDateString()}
+            {`${item.volume} lots`}
+          </Box>
+          <Box color={colors.grey[100]}>
+            {`risk: ${item.risk} $`}
+          </Box>
+          <Box color={colors.grey[100]}>
+            {`profit: ${item.profit} $`}
           </Box>
           <Box
             sx={{ bgcolor: colors.greenAccent[600] }}
@@ -189,6 +182,6 @@ function ViolationTodayList({ accountId }: Props) {
     </>
   );
 }
-ViolationTodayList.displayName = 'ViolationTodayList';
+TradesTodayList.displayName = 'TradesTodayList';
 
-export default ViolationTodayList;
+export default TradesTodayList;

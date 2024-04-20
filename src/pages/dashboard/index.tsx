@@ -1,11 +1,10 @@
 import {
-  Box, Button, IconButton, Typography, useTheme,
+  Box, Button, Typography, useTheme,
 } from '@mui/material';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import TrafficIcon from '@mui/icons-material/Traffic';
 import { tokens } from '../../theme.ts';
 import Header from '../../components/Header.tsx';
-import LineChart from '../../components/LineChart.tsx';
 import BarChart from '../../components/BarChart.tsx';
 import StatBox from '../../components/StatBox.tsx';
 import ProgressCircle from '../../components/ProgressCircle.tsx';
@@ -95,34 +94,7 @@ function Dashboard() {
             display="flex "
             justifyContent="space-between"
             alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Revenue Generated
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: '26px', color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard accountId={numTradesAccountId} />
-          </Box>
+          />
         </Box>
         <Box
           gridColumn="span 4"
