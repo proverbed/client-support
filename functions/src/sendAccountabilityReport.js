@@ -23,6 +23,7 @@ function assignTypes() {
             return doc;
         },
         fromFirestore(snapshot) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return snapshot.data();
         },
     };

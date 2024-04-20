@@ -20,6 +20,7 @@ export function assignTypes<T extends object>() {
       return doc;
     },
     fromFirestore(snapshot: QueryDocumentSnapshot): T {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return snapshot.data()! as T;
     },
   };

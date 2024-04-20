@@ -4,7 +4,7 @@ function winRate(arr: {profit: number}[]) {
   let count = 0;
 
   if (total === 0) {
-    return 0;
+    return '0';
   }
 
   arr.forEach((item) => {
