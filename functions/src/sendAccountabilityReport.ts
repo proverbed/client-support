@@ -1,6 +1,9 @@
 import {onDocumentCreated} from "firebase-functions/v2/firestore";
-import {info, error, warn} from "firebase-functions/logger";
-import {DocumentData, QueryDocumentSnapshot, QuerySnapshot, getFirestore} from "firebase-admin/firestore";
+import {info, error, warn, debug} from "firebase-functions/logger";
+import {DocumentData, QueryDocumentSnapshot, Timestamp, getFirestore} from "firebase-admin/firestore";
+import Handlebars from "handlebars";
+import emailTemplate from "./templates/email";
+import {getAuth} from "firebase-admin/auth";
 
 const PATH = "sendAccountabilityReport/{reportId}";
 
@@ -23,37 +26,17 @@ export function assignTypes<T extends object>() {
 }
 
 const sendAccountabilityReport = onDocumentCreated(PATH, async (event) => {
-  // Get an object representing the document
-  // e.g. {'name': 'Marie', 'age': 66}
   const snapshot = event.data;
   if (!snapshot) {
-    console.log("No data associated with the event");
+    info("No data associated with the event");
     return;
   }
   const data = snapshot.data();
-
-  info(`calling sendAccountabilityReport with data: ${JSON.stringify(data, null, 2)}`);
-
   try {
     await generateReport(data.accountId, data.userId, data.date);
   } catch (e) {
     error(`generate report failed: ${e}`);
   }
-
-  /**
-   * call generate report with the given data
-   *
-   * - user id fYsG7QIHknQGRQ6m0BEVmWdniBmN
-   * - account id 741e95b2-abe7-59c5-aa16-794750951c5c
-   * - date 2024-04-17
-   *
-   *
-   */
-
-  // access a particular field as you would any JS property
-  // const name = data.name;
-
-  // perform more operations ...
 });
 
 /**
@@ -64,18 +47,63 @@ const sendAccountabilityReport = onDocumentCreated(PATH, async (event) => {
  * @param {string} date date
  */
 async function generateReport(accountId: string, userId: string, date: string) {
-  // validate input data
+  // validate input data - @todo validate that account belongs to user
+
   info(`generateReport for accountId: [${accountId}] userId: [${userId}] date: [${date}]`);
 
   const dailyBalance = await getDailyBalance(accountId, userId, date);
+  const userDisplayName = await getUserDisplayName(userId);
+  const numTrades = await getNumberOfTrades(accountId, userId, date);
 
-  info(`dailyBalance for accountId: [${accountId}] userId: [${userId}] date: [${date}] is ${dailyBalance}`);
+  info(`dailyBalance: [${dailyBalance}] userDisplayName: [${userDisplayName}] numTrades: [${numTrades}]`);
 
+  const data = await getTradesForDate(accountId, date);
+  debug("trade data", JSON.stringify(data, null, 2));
 
-  // take the daily balance and send an email.
+  const violationData = await getViolationsForDate(accountId, date);
+  debug("violation data", JSON.stringify(violationData, null, 2));
 
-  // check if account belongs to user
-  // query given date
+  const templateHTML = Handlebars.compile(emailTemplate.REPORT1.HTML);
+  const templateSUBJECT = Handlebars.compile(emailTemplate.REPORT1.SUBJECT);
+  const templateTEXT = Handlebars.compile(emailTemplate.REPORT1.TEXT);
+
+  const htmlParams = {
+    balance: dailyBalance,
+    date,
+    trader: userDisplayName,
+    numTrades: numTrades,
+    items: [
+      {
+        a: "a1",
+        b: "b1",
+      },
+      {
+        a: "a2",
+        b: "b2",
+      },
+    ],
+  };
+  const subject = templateSUBJECT({trader: userDisplayName});
+  const text = templateTEXT(htmlParams);
+  const html = templateHTML(htmlParams);
+
+  // add a record into mail collection
+  createEmail(db, subject, text, html);
+}
+
+/**
+ * Get user display name
+ *
+ * @param {string} userId user id
+ */
+async function getUserDisplayName(userId: string) {
+  const userData = await getAuth()
+    .getUser(userId);
+  if (userData.displayName.length == 0) {
+    return null;
+  }
+  info(`getUserDisplayName ${userData.displayName}`);
+  return userData.displayName;
 }
 
 /**
@@ -87,33 +115,125 @@ async function generateReport(accountId: string, userId: string, date: string) {
  */
 async function getDailyBalance(accountId: string, userId: string, date: string) {
   try {
-    const data: number[] = [];
-    const startOfToday = new Date(date);
-    startOfToday.setHours(0, 0, 0, 0);
-    const endOfToday = new Date();
-    endOfToday.setHours(23, 59, 59, 999);
-
-    const snapshot = await db
-      .collection(`accounts/${accountId}/dailyBalance`)
-      .where("date", ">=", startOfToday)
-      .where("date", "<=", endOfToday)
-      .withConverter(assignTypes<{dailyBalance: number}>())
-      .get();
-
-    if (snapshot.empty) {
+    const dailyBalanceSnapshot = await db.doc(`accounts/${accountId}/dailyBalance/${date}`).get();
+    if (!dailyBalanceSnapshot.exists) {
       warn(`No daily balance for accountId: [${accountId}] userId: [${userId}] date: [${date}]`);
       return 0;
     }
-
-    snapshot.docs.forEach((doc) => {
-      info(`doc daily balance: [${doc.data().dailyBalance}]`);
-      data.push(doc.data().dailyBalance);
-    });
-
-    return data[0];
+    return dailyBalanceSnapshot.data().dailyBalance;
   } catch (err) {
     error(err);
   }
+}
+
+/**
+ * Get number of trades
+ *
+ * @param {string} accountId account id
+ * @param {string} userId user id
+ * @param {string} date date
+ */
+async function getNumberOfTrades(accountId: string, userId: string, date: string) {
+  try {
+    const numTradesRef = await db.doc(`accounts/${accountId}/numTrades/${date}`).get();
+    if (!numTradesRef.exists) {
+      warn(`No number of trades for accountId: [${accountId}] userId: [${userId}] date: [${date}]`);
+      return 0;
+    }
+    return numTradesRef.data().numberTrades;
+  } catch (err) {
+    error(err);
+  }
+}
+
+/**
+ * Get trades for date
+ *
+ *  @param {string} accountId account id
+ *  @param {string} date date
+ */
+async function getTradesForDate(accountId: string, date: string) {
+  const startOfToday = new Date(date);
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  const results = [];
+
+  try {
+    const tradeSnapshopToday = await db
+      .collection(`accounts/${accountId}/trades`)
+      .where("date", ">=", startOfToday)
+      .where("date", "<=", endOfToday)
+      .get();
+
+    tradeSnapshopToday.forEach((doc) => {
+      results.push({
+        id: doc.id,
+        data: doc.data(),
+      });
+    });
+    return results;
+  } catch (err) {
+    error(err);
+  }
+}
+
+/**
+ * Get violations for date
+ *
+ *  @param {string} accountId account id
+ *  @param {string} date date
+ */
+async function getViolationsForDate(accountId: string, date: string) {
+  const startOfToday = new Date(date);
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  const results = [];
+
+  try {
+    const violationRef = await db
+      .collection(`accounts/${accountId}/violation`)
+      .where("date", ">=", startOfToday)
+      .where("date", "<=", endOfToday)
+      .get();
+
+    violationRef.forEach((doc) => {
+      results.push({
+        id: doc.id,
+        data: doc.data(),
+      });
+    });
+    return results;
+  } catch (err) {
+    error(err);
+  }
+}
+
+/**
+ * Create email
+ *
+ * @param {object} db
+ * @param {string} subject
+ * @param {string} text
+ * @param {string} html
+ */
+function createEmail(db, subject, text, html) {
+  const writeBatch = db.batch();
+  const createDocRef = db.collection("mail").doc();
+
+  writeBatch.create(createDocRef, {
+    message: {
+      html, subject, text,
+    },
+    to: ["dmitriwarren@gmail.com"],
+    date: Timestamp.fromDate(new Date()),
+  });
+  writeBatch.commit().then(() => {
+    info("Successfully created batch.");
+  });
 }
 
 export {

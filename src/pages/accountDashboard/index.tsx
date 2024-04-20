@@ -1,16 +1,22 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import {
+  Box, Button, Typography, useTheme,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
+import {
+  collection, doc, setDoc,
+} from 'firebase/firestore';
+import moment from 'moment';
 import { tokens } from '../../theme.ts';
 import Header from '../../components/Header.tsx';
-import LineChart from '../../components/LineChart.tsx';
 import BarChart from '../../components/BarChart.tsx';
-import ProgressCircle from '../../components/ProgressCircle.tsx';
 import NumberTradesToday from '../../components/NumberTradesToday.tsx';
 import TradeBalanceToday from '../../components/TradeBalanceToday.tsx';
 import ViolationToday from '../../components/ViolationToday.tsx';
 import ViolationTodayList from '../../components/ViolationTodayList.tsx';
 import WinRate from '../../components/WinRate.tsx';
 import WinsLosses from '../../components/WinsLosses.tsx';
+import { db } from '../../config/Firebase.ts';
+import { UserAuth } from '../../store/AuthContext.tsx';
 
 export interface NumTradesProps {
   id?: string;
@@ -20,12 +26,27 @@ export interface NumTradesProps {
 
 function AccountDashboard() {
   const theme = useTheme();
+  const { user } = UserAuth();
   const colors = tokens(theme.palette.mode);
   const { accountId } = useParams<{
     accountId: string;
   }>();
 
   const myAccountId = accountId !== undefined ? accountId : '';
+
+  const handleRequestReport = async () => {
+    try {
+      const newReportRef = doc(collection(db, 'sendAccountabilityReport'));
+
+      await setDoc(newReportRef, {
+        userId: user.uid,
+        accountId,
+        date: moment.utc(new Date()).format('YYYY-MM-DD'),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -61,27 +82,8 @@ function AccountDashboard() {
             display="flex "
             justifyContent="space-between"
             alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Account Balance
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $ Put account balance here
-              </Typography>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard accountId={myAccountId} />
-          </Box>
+          />
+
         </Box>
         <Box
           gridColumn="span 4"
@@ -100,7 +102,7 @@ function AccountDashboard() {
           p="30px"
         >
           <Typography variant="h5" fontWeight="600">
-            Campaign
+            Accountability Partner
           </Typography>
           <Box
             display="flex"
@@ -108,15 +110,9 @@ function AccountDashboard() {
             alignItems="center"
             mt="25px"
           >
-            <ProgressCircle size={125} />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: '15px' }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
+            <Button type="submit" color="secondary" variant="contained" onClick={handleRequestReport}>
+              Request report
+            </Button>
           </Box>
         </Box>
         <Box

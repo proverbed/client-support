@@ -102,14 +102,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/line',
-        element: (
-          <Protected>
-            <Line />
-          </Protected>
-        ),
-      },
-      {
         path: '/pie',
         element: (
           <Protected>

@@ -188,13 +188,6 @@ function Sidebar() {
               selected={selected}
               setSelected={setSelected}
             />
-            <SitebarItem
-              title="Line Chart"
-              to="/line"
-              icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
           </Box>
 
           {!isCollapsed && (

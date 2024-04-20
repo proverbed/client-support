@@ -270,6 +270,7 @@ async function insertRiskExposureEntries(accountId) {
                 numberTrades: numOpenTrades,
                 risk: maxRisk,
                 riskPerTrade: riskPerTrade,
+                ticketList: ticketList.toString(),
             });
         }
         if (isNaN(maxRisk)) {
