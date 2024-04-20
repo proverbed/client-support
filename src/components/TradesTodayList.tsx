@@ -165,10 +165,10 @@ function TradesTodayList({ accountId }: Props) {
             {`${item.volume} lots`}
           </Box>
           <Box color={colors.grey[100]}>
-            {`risk: ${item.risk} $`}
+            {`risk: $ ${item.risk}`}
           </Box>
           <Box color={colors.grey[100]}>
-            {`profit: ${item.profit} $`}
+            {`profit: $ ${item.profit}`}
           </Box>
           <Box
             sx={{ bgcolor: colors.greenAccent[600] }}
