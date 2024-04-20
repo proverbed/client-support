@@ -17,6 +17,7 @@ import WinRate from '../../components/WinRate.tsx';
 import WinsLosses from '../../components/WinsLosses.tsx';
 import { db } from '../../config/Firebase.ts';
 import { UserAuth } from '../../store/AuthContext.tsx';
+import TradesTodayList from '../../components/TradesTodayList.tsx';
 
 export interface NumTradesProps {
   id?: string;
@@ -76,14 +77,7 @@ function AccountDashboard() {
           gridRow="span 2"
           sx={{ bgcolor: colors.primary[400] }}
         >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          />
-
+          <TradesTodayList accountId={myAccountId} />
         </Box>
         <Box
           gridColumn="span 4"

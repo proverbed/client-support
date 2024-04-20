@@ -58,8 +58,8 @@ async function generateReport(accountId, userId, date) {
     const userDisplayName = await getUserDisplayName(userId);
     const numTrades = await getNumberOfTrades(accountId, userId, date);
     (0, logger_1.info)(`dailyBalance: [${dailyBalance}] userDisplayName: [${userDisplayName}] numTrades: [${numTrades}]`);
-    const data = await getTradesForDate(accountId, date);
-    (0, logger_1.debug)("trade data", JSON.stringify(data, null, 2));
+    const trades = await getTradesForDate(accountId, date);
+    (0, logger_1.debug)("trade data", JSON.stringify(trades, null, 2));
     const violationData = await getViolationsForDate(accountId, date);
     (0, logger_1.debug)("violation data", JSON.stringify(violationData, null, 2));
     const templateHTML = handlebars_1.default.compile(email_1.default.REPORT1.HTML);
@@ -70,17 +70,9 @@ async function generateReport(accountId, userId, date) {
         date,
         trader: userDisplayName,
         numTrades: numTrades,
-        items: [
-            {
-                a: "a1",
-                b: "b1",
-            },
-            {
-                a: "a2",
-                b: "b2",
-            },
-        ],
+        items: trades,
     };
+    (0, logger_1.debug)("html params", JSON.stringify(htmlParams, null, 2));
     const subject = templateSUBJECT({ trader: userDisplayName });
     const text = templateTEXT(htmlParams);
     const html = templateHTML(htmlParams);
@@ -162,7 +154,7 @@ async function getTradesForDate(accountId, date) {
         tradeSnapshopToday.forEach((doc) => {
             results.push({
                 id: doc.id,
-                data: doc.data(),
+                ...doc.data(),
             });
         });
         return results;

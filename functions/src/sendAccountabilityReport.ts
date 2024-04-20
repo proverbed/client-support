@@ -58,11 +58,13 @@ async function generateReport(accountId: string, userId: string, date: string) {
 
   info(`dailyBalance: [${dailyBalance}] userDisplayName: [${userDisplayName}] numTrades: [${numTrades}]`);
 
-  const data = await getTradesForDate(accountId, date);
-  debug("trade data", JSON.stringify(data, null, 2));
+  const trades = await getTradesForDate(accountId, date);
+  debug("trade data", JSON.stringify(trades, null, 2));
 
   const violationData = await getViolationsForDate(accountId, date);
   debug("violation data", JSON.stringify(violationData, null, 2));
+
+  // let violationPerTicket = violationData.
 
   const templateHTML = Handlebars.compile(emailTemplate.REPORT1.HTML);
   const templateSUBJECT = Handlebars.compile(emailTemplate.REPORT1.SUBJECT);
@@ -73,17 +75,9 @@ async function generateReport(accountId: string, userId: string, date: string) {
     date,
     trader: userDisplayName,
     numTrades: numTrades,
-    items: [
-      {
-        a: "a1",
-        b: "b1",
-      },
-      {
-        a: "a2",
-        b: "b2",
-      },
-    ],
+    items: trades,
   };
+  debug("html params", JSON.stringify(htmlParams, null, 2));
   const subject = templateSUBJECT({trader: userDisplayName});
   const text = templateTEXT(htmlParams);
   const html = templateHTML(htmlParams);
@@ -171,7 +165,7 @@ async function getTradesForDate(accountId: string, date: string) {
     tradeSnapshopToday.forEach((doc) => {
       results.push({
         id: doc.id,
-        data: doc.data(),
+        ...doc.data(),
       });
     });
     return results;
@@ -204,7 +198,7 @@ async function getViolationsForDate(accountId: string, date: string) {
     violationRef.forEach((doc) => {
       results.push({
         id: doc.id,
-        data: doc.data(),
+        ...doc.data(),
       });
     });
     return results;

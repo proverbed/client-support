@@ -7,9 +7,21 @@ const emailTemplate = {
     <tbody>
       <!-- {{#each items}} -->
       <tr>
-        <td>{{a}}</td>
-        <td>{{b}}</td>
+        <th>Ticket</th>
+        <th>Instrument</th>
+        <th>Type</th>
+        <th>Volume</th>
+        <th>Risk</th>
+        <th>Profit</th>
       </tr>
+      <tr>
+        <td>{{ticket}}</td>
+        <td>{{instrument}}</td>
+        <td>{{type}}</td>
+        <td>{{volume}}</td>
+        <td>{{risk}}</td>
+        <td>{{profit}}</td>
+        </tr>
       <!-- {{/each}} -->
     </tbody>
   </table>    
