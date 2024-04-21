@@ -61,7 +61,7 @@ async function generateReport(accountId: string, userId: string, date: string) {
   const trades = await getTradesForDate(accountId, date);
   debug("trade data", JSON.stringify(trades, null, 2));
 
-  const violationData = await getViolationsForDate(accountId, date);
+  let violationData = await getViolationsForDate(accountId, date);
   debug("violation data", JSON.stringify(violationData, null, 2));
 
   // let violationPerTicket = violationData.
@@ -70,12 +70,50 @@ async function generateReport(accountId: string, userId: string, date: string) {
   const templateSUBJECT = Handlebars.compile(emailTemplate.REPORT1.SUBJECT);
   const templateTEXT = Handlebars.compile(emailTemplate.REPORT1.TEXT);
 
+/* eslint-disable */
+  violationData = violationData.map((x)=>{
+    switch (x.type) {
+    case "tooBig":
+      return {
+        ...x,
+        description: `Trading too big a position, relative to the account size. Not respecting proper RISK MANAGEMENT. Trader could also be REVENGE TRADING. The set risk per trade is set to $${x.riskPerTrade}, the risk on this trade is $${x.risk}`,
+        severity: "HIGH",
+      };
+    case "noStop":
+      return {
+        ...x,
+        description: "Opening a trade with a stoploss defined. This is crazy, as it puts the entire trading account at risk. ",
+        severity: "HIGH",
+      };
+    case "drawdown":
+      return {
+        ...x,
+        ticketList: x.ticket,
+        description: "Trader has met the daily drawdown limit, yet continue trading. Trader is possibly OVERTRADING, trying to force trades.",
+        severity: "HIGH",
+      };
+    case "profit":
+      return {
+        ...x,
+        ticketList: x.ticket,
+        description: "Trader has met the daily profit target, yet continue trading. Trader is possibly OVERTRADING, trying to force trades.",
+        severity: "HIGH",
+      };
+    }
+    return x;
+  });
+  /* eslint-enable */
+
+  debug("violation data updated ", JSON.stringify(violationData, null, 2));
+
   const htmlParams = {
     balance: dailyBalance,
     date,
     trader: userDisplayName,
     numTrades: numTrades,
+    numViolations: violationData.length,
     items: trades,
+    violations: violationData,
   };
   debug("html params", JSON.stringify(htmlParams, null, 2));
   const subject = templateSUBJECT({trader: userDisplayName});

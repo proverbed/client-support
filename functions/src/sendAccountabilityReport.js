@@ -60,17 +60,54 @@ async function generateReport(accountId, userId, date) {
     (0, logger_1.info)(`dailyBalance: [${dailyBalance}] userDisplayName: [${userDisplayName}] numTrades: [${numTrades}]`);
     const trades = await getTradesForDate(accountId, date);
     (0, logger_1.debug)("trade data", JSON.stringify(trades, null, 2));
-    const violationData = await getViolationsForDate(accountId, date);
+    let violationData = await getViolationsForDate(accountId, date);
     (0, logger_1.debug)("violation data", JSON.stringify(violationData, null, 2));
+    // let violationPerTicket = violationData.
     const templateHTML = handlebars_1.default.compile(email_1.default.REPORT1.HTML);
     const templateSUBJECT = handlebars_1.default.compile(email_1.default.REPORT1.SUBJECT);
     const templateTEXT = handlebars_1.default.compile(email_1.default.REPORT1.TEXT);
+    /* eslint-disable */
+    violationData = violationData.map((x) => {
+        switch (x.type) {
+            case "tooBig":
+                return {
+                    ...x,
+                    description: `Trading too big a position, relative to the account size. Not respecting proper RISK MANAGEMENT. Trader could also be REVENGE TRADING. The set risk per trade is set to $${x.riskPerTrade}, the risk on this trade is $${x.risk}`,
+                    severity: "HIGH",
+                };
+            case "noStop":
+                return {
+                    ...x,
+                    description: "Opening a trade with a stoploss defined. This is crazy, as it puts the entire trading account at risk. ",
+                    severity: "HIGH",
+                };
+            case "drawdown":
+                return {
+                    ...x,
+                    ticketList: x.ticket,
+                    description: "Trader has met the daily drawdown limit, yet continue trading. Trader is possibly OVERTRADING, trying to force trades.",
+                    severity: "HIGH",
+                };
+            case "profit":
+                return {
+                    ...x,
+                    ticketList: x.ticket,
+                    description: "Trader has met the daily profit target, yet continue trading. Trader is possibly OVERTRADING, trying to force trades.",
+                    severity: "HIGH",
+                };
+        }
+        return x;
+    });
+    /* eslint-enable */
+    (0, logger_1.debug)("violation data updated ", JSON.stringify(violationData, null, 2));
     const htmlParams = {
         balance: dailyBalance,
         date,
         trader: userDisplayName,
         numTrades: numTrades,
+        numViolations: violationData.length,
         items: trades,
+        violations: violationData,
     };
     (0, logger_1.debug)("html params", JSON.stringify(htmlParams, null, 2));
     const subject = templateSUBJECT({ trader: userDisplayName });
@@ -184,7 +221,7 @@ async function getViolationsForDate(accountId, date) {
         violationRef.forEach((doc) => {
             results.push({
                 id: doc.id,
-                data: doc.data(),
+                ...doc.data(),
             });
         });
         return results;
