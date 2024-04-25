@@ -21,8 +21,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
         working-directory: ${{env.working-directory}}
-      - run: npm install
-        working-directory: ${{env.working-directory}}
       - run: npm run lint
         working-directory: ${{env.working-directory}}
         env:
