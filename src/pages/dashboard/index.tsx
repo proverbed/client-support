@@ -2,11 +2,9 @@ import {
   Box, Button, Typography, useTheme,
 } from '@mui/material';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
-import TrafficIcon from '@mui/icons-material/Traffic';
 import { tokens } from '../../theme.ts';
 import Header from '../../components/Header.tsx';
 import BarChart from '../../components/BarChart.tsx';
-import StatBox from '../../components/StatBox.tsx';
 import ProgressCircle from '../../components/ProgressCircle.tsx';
 import NumberTradesToday from '../../components/NumberTradesToday.tsx';
 import TradeBalanceToday from '../../components/TradeBalanceToday.tsx';
@@ -62,25 +60,6 @@ function Dashboard() {
         <NumberTradesToday accountId={numTradesAccountId} />
         <TradeBalanceToday accountId={tradeBalancecAccountId} />
         <ViolationToday accountId={violationTodayAccountId} />
-        <Box
-          gridColumn="span 3"
-          sx={{ bgcolor: colors.primary[400] }}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress={0.8}
-            increase="+43%"
-            icon={(
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: '26px' }}
-              />
-            )}
-          />
-        </Box>
 
         {/* ROW 2 */}
         <Box
