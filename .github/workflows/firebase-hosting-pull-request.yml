@@ -24,7 +24,7 @@ jobs:
           VITE_STORAGE_BUCKET: ${{ secrets.VITE_STORAGE_BUCKET }}
           VITE_MESSAGING_SENDER_ID: ${{ secrets.VITE_MESSAGING_SENDER_ID }}
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
-        run: npm build
+        run: npm run build
       - uses: w9jds/firebase-action@master
         with:
           args: hosting:channel:deploy ${{ env.GITHUB_HEAD_REF_SLUG }} --expires 7d
