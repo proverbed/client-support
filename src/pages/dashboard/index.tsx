@@ -62,25 +62,6 @@ function Dashboard() {
         <NumberTradesToday accountId={numTradesAccountId} />
         <TradeBalanceToday accountId={tradeBalancecAccountId} />
         <ViolationToday accountId={violationTodayAccountId} />
-        <Box
-          gridColumn="span 3"
-          sx={{ bgcolor: colors.primary[400] }}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress={0.8}
-            increase="+43%"
-            icon={(
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: '26px' }}
-              />
-            )}
-          />
-        </Box>
 
         {/* ROW 2 */}
         <Box
