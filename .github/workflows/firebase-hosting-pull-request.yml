@@ -16,6 +16,7 @@ jobs:
       - run: npm install
       - name: Build project ${{ env.GITHUB_HEAD_REF_SLUG }}
         env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRADE_METRICS }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
           REACT_APP_BASEURL: ${{ secrets.REACT_APP_BASEURL }}
@@ -29,3 +30,4 @@ jobs:
           args: hosting:channel:deploy ${{ env.GITHUB_HEAD_REF_SLUG }} --expires 7d
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRADE_METRICS }}
