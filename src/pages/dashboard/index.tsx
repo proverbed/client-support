@@ -2,11 +2,9 @@ import {
   Box, Button, Typography, useTheme,
 } from '@mui/material';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
-import TrafficIcon from '@mui/icons-material/Traffic';
 import { tokens } from '../../theme.ts';
 import Header from '../../components/Header.tsx';
 import BarChart from '../../components/BarChart.tsx';
-import StatBox from '../../components/StatBox.tsx';
 import ProgressCircle from '../../components/ProgressCircle.tsx';
 import NumberTradesToday from '../../components/NumberTradesToday.tsx';
 import TradeBalanceToday from '../../components/TradeBalanceToday.tsx';
