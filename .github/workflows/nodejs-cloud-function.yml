@@ -1,11 +1,11 @@
-name: Node.js Cloud Functions CI
+name: Build and Run Lint for Cloud Functions CI
 
 on: [push]
 
 jobs:
   build:
     env:
-      working-directory: ./
+      working-directory: ./functions
 
     runs-on: ubuntu-latest
 
