@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: '12.x'
-      - run: yarn install
+      - run: npm install
       - name: Build project ${{ env.GITHUB_HEAD_REF_SLUG }}
         env:
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
@@ -23,7 +23,7 @@ jobs:
           VITE_STORAGE_BUCKET: ${{ secrets.VITE_STORAGE_BUCKET }}
           VITE_MESSAGING_SENDER_ID: ${{ secrets.VITE_MESSAGING_SENDER_ID }}
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
-        run: yarn build
+        run: npm build
       - uses: w9jds/firebase-action@master
         with:
           args: hosting:channel:deploy ${{ env.GITHUB_HEAD_REF_SLUG }} --expires 7d
