@@ -1,4 +1,5 @@
 import {onDocumentCreated} from "firebase-functions/v2/firestore";
+import {onSchedule} from "firebase-functions/v2/scheduler";
 import {info, error, warn, debug} from "firebase-functions/logger";
 import {DocumentData, QueryDocumentSnapshot, Timestamp, getFirestore} from "firebase-admin/firestore";
 import Handlebars from "handlebars";
@@ -64,8 +65,6 @@ async function generateReport(accountId: string, userId: string, date: string) {
   let violationData = await getViolationsForDate(accountId, date);
   debug("violation data", JSON.stringify(violationData, null, 2));
 
-  // let violationPerTicket = violationData.
-
   const templateHTML = Handlebars.compile(emailTemplate.REPORT1.HTML);
   const templateSUBJECT = Handlebars.compile(emailTemplate.REPORT1.SUBJECT);
   const templateTEXT = Handlebars.compile(emailTemplate.REPORT1.TEXT);
@@ -103,8 +102,6 @@ async function generateReport(accountId: string, userId: string, date: string) {
     return x;
   });
   /* eslint-enable */
-
-  debug("violation data updated ", JSON.stringify(violationData, null, 2));
 
   const htmlParams = {
     balance: dailyBalance,
@@ -261,13 +258,27 @@ function createEmail(db, subject, text, html) {
     message: {
       html, subject, text,
     },
-    to: ["dmitriwarren@gmail.com"],
+    to: ["dmitriwarren@gmail.com", "deklerk.kim@gmail.com", "tradedealptyltd@gmail.com"],
     date: Timestamp.fromDate(new Date()),
   });
   writeBatch.commit().then(() => {
     info("Successfully created batch.");
   });
 }
+
+
+// // Manually run the task here https://console.cloud.google.com/cloudscheduler
+// exports.sendAccountabilityReportsOut = onSchedule("every day 00:00", async (event) => {
+//   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
+//   const promisePool = new PromisePool(
+//     () => deleteInactiveUser(inactiveUsers),
+//     MAX_CONCURRENT,
+//   );
+//   await promisePool.start();
+
+//   info("Scheduler sending out accountability reports");
+// });
+
 
 export {
   sendAccountabilityReport,

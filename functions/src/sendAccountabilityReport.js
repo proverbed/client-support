@@ -245,7 +245,7 @@ function createEmail(db, subject, text, html) {
         message: {
             html, subject, text,
         },
-        to: ["dmitriwarren@gmail.com"],
+        to: ["dmitriwarren@gmail.com", "deklerk.kim@gmail.com", "tradedealptyltd@gmail.com"],
         date: firestore_2.Timestamp.fromDate(new Date()),
     });
     writeBatch.commit().then(() => {
