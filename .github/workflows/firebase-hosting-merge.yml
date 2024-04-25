@@ -10,12 +10,10 @@ jobs:
   build_and_deploy_live:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: '12.x'
+      - uses: actions/checkout@v4
+      # Add any build steps here. For example:
       - run: npm install
-      - name: Build project
+      - name: Build project ${{ env.GITHUB_HEAD_REF_SLUG }}
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRADE_METRICS }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
@@ -25,10 +23,9 @@ jobs:
           VITE_STORAGE_BUCKET: ${{ secrets.VITE_STORAGE_BUCKET }}
           VITE_MESSAGING_SENDER_ID: ${{ secrets.VITE_MESSAGING_SENDER_ID }}
           VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
-        run: npm build
-      - uses: w9jds/firebase-action@master
+        run: npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          args: deploy --only hosting --project=stock-keeper-web
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRADE_METRICS }}
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRADESTATS_WEB }}"
+          channelId: live
