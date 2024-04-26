@@ -5,6 +5,8 @@ const CONST = {
     VIOLATION: {
         TOO_BIG: "tooBig",
         NO_STOP: "noStop",
+        PROFIT_BREACHED: "profit",
+        DRAWDOWN_BREACHED: "drawdown",
     },
     DB: {
         VIOLATION: "violations",

@@ -6,6 +6,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.accountDailyBalance = exports.createTrade = exports.metrics = void 0;
+const firestore_1 = require("firebase-admin/firestore");
 const Const_1 = __importDefault(require("./globals/Const"));
 /** NEED TO FIX ESLINT IN THIS FILE, AND GO OVER TYPESCRIPT AGAIN, AND REMOVE ESLINT DISABLE. */
 const { onRequest } = require("firebase-functions/v2/https");
@@ -65,7 +66,6 @@ app.post("/sendMessage", async (req, res) => {
                 info(`exit open trade, open trade id: ${tradeData.id}`);
                 const activityData = await getOpenTradesActivityForTicketData(accountId, tradeData.id);
                 const violationData = await getOpenTradesViolationsForTicketData(accountId, tradeData.id);
-                info(`Violation data found: ${tradeData.id} violation data: ${JSON.stringify(violationData, null, 2)}`);
                 await addTradeAndActivity(accountId, tradeData, activityData, violationData, obj);
                 // delete open trade for ticket id
                 await deleteOpenTrade(accountId, tradeData);
@@ -251,19 +251,6 @@ async function addOpenTradeViolation(accountId, openTradeId, violationData) {
     });
     info(`add open trade violation: ${JSON.stringify(violationData, null, 2)}`);
 }
-// /**
-//  * Add an open trade risk exposure entry to cloud firestore
-//  *
-//  * @param {string} accountId the account id
-//  * @param {object} tradeData the trade object data
-//  */
-// async function addOpenTradeRiskExposure(accountId, tradeData) {
-//   await db.collection(`accounts/${accountId}/riskExposure`).add({
-//     risk: tradeData.risk,
-//     numberTrades: tradeData.numberTrades,
-//     date: tradeData.date
-//   });
-// }
 /**
  * Query open trades and insert risk exposure entry
  *
@@ -290,13 +277,15 @@ async function insertRiskExposureEntries(accountId) {
                 ticketList: ticketList.toString(),
             };
             createViolation(db, accountId, Const_1.default.VIOLATION.TOO_BIG, violationData);
-            createTradeViolation(db, accountId, Const_1.default.VIOLATION.TOO_BIG, violationData);
+            createOpenTradeViolation(db, accountId, Const_1.default.VIOLATION.TOO_BIG, violationData);
         }
         if (isNaN(maxRisk)) {
             // create violation
-            createViolation(db, accountId, Const_1.default.VIOLATION.NO_STOP, {
+            const violationData = {
                 ticketList: ticketList.toString(),
-            });
+            };
+            createViolation(db, accountId, Const_1.default.VIOLATION.NO_STOP, violationData);
+            createOpenTradeViolation(db, accountId, Const_1.default.VIOLATION.NO_STOP, violationData);
         }
     }
 }
@@ -383,8 +372,8 @@ async function getOpenTradesForTicketData(accountId, ticket) {
  * @return {list} list of open trade activity details
  */
 async function getOpenTradesActivityForTicketData(accountId, openTradeId) {
-    const accountRef = `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${openTradeId}/${Const_1.default.DB.ACTIVITY}}`;
-    const snapshot = await db.collection(accountRef).get();
+    const path = `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${openTradeId}/${Const_1.default.DB.ACTIVITY}`;
+    const snapshot = await db.collection(path).get();
     const idList = [];
     snapshot.forEach((doc) => {
         idList.push({
@@ -424,9 +413,11 @@ async function getOpenTradesViolationsForTicketData(accountId, openTradeId) {
  */
 async function addTradeAndActivity(accountId, tradeData, activityData, violationData, exitTradeData) {
     const tradeRef = `accounts/${accountId}/trades`;
+    let violationTypes = new Set(violationData.map(x => x.data.type));
     const data = {
         ...tradeData.data,
         profit: Number(exitTradeData.profit) + Number(exitTradeData.commision),
+        violations: Array.from(violationTypes),
         date: Timestamp.fromDate(new Date()),
     };
     const res = await db.collection(tradeRef).add(data);
@@ -594,15 +585,17 @@ const accountDailyBalance = functions.firestore
         debug(`balance: ${balance}`);
         if (balance > profitTarget) {
             // create violation
-            createViolation(db, context.params.accountId, "profit", {
+            createViolation(db, context.params.accountId, Const_1.default.VIOLATION.PROFIT_BREACHED, {
                 ticket: snap.data().ticket,
             });
+            createTradeViolation(db, context.params.accountId, snap.data().ticket, Const_1.default.VIOLATION.PROFIT_BREACHED, {});
         }
         if (balance < -drawdownLimit) {
             // create violation
-            createViolation(db, context.params.accountId, "drawdown", {
+            createViolation(db, context.params.accountId, Const_1.default.VIOLATION.DRAWDOWN_BREACHED, {
                 ticket: snap.data().ticket,
             });
+            createTradeViolation(db, context.params.accountId, snap.data().ticket, Const_1.default.VIOLATION.DRAWDOWN_BREACHED, {});
         }
         const updateData = {
             dailyBalance: balance,
@@ -652,30 +645,29 @@ function createViolation(db, accountId, type, additionData) {
     });
 }
 /**
- * Create trade violation
+ * Create open trade violation
  *
  * @param {object} db
  * @param {string} accountId
  * @param {string} type
  * @param {object} additionData
  */
-async function createTradeViolation(db, accountId, type, additionData) {
+async function createOpenTradeViolation(db, accountId, type, additionData) {
     let list = additionData.ticketList.split(',');
-    info(`createTradeViolation: list ${list}`);
     for (let item of list) {
         // query trade for the given ticket 
-        info(`createTradeViolation: Query trade details for ${item} ${type}`);
+        info(`createOpenTradeViolation: Query trade details for ${item} ${type}`);
         const tradeRef = await db
             .collection(`accounts/${accountId}/openTrades`)
             .where("ticket", "==", item)
             .get();
         if (tradeRef.empty) {
-            warn(`createTradeViolation: No matching documents for ${item} `);
+            warn(`createOpenTradeViolation: No matching documents for ${item} `);
             return;
         }
         else {
             tradeRef.forEach(async (doc) => {
-                info(`createTradeViolation: doc ${doc.id}, data: [${JSON.stringify(doc.data(), null, 2)}] adding`);
+                info(`createOpenTradeViolation: doc ${doc.id}, data: [${JSON.stringify(doc.data(), null, 2)}] adding`);
                 delete additionData.ticketList;
                 await addOpenTradeViolation(accountId, doc.id, {
                     type,
@@ -683,5 +675,42 @@ async function createTradeViolation(db, accountId, type, additionData) {
                 });
             });
         }
+    }
+}
+/**
+ * Create trade violation
+ *
+ * @param {object} db
+ * @param {string} accountId
+ * @param {string} ticket
+ * @param {string} type
+ * @param {object} additionData
+ */
+async function createTradeViolation(db, accountId, ticket, type, additionData) {
+    // query trade for the given ticket 
+    info(`createTradeViolation: Query trade details for ${ticket} ${type}`);
+    const tradeRef = await db
+        .collection(`accounts/${accountId}/${Const_1.default.DB.TRADES}`)
+        .where("ticket", "==", ticket)
+        .get();
+    if (tradeRef.empty) {
+        warn(`createTradeViolation: No matching documents for ${ticket} `);
+        return;
+    }
+    else {
+        tradeRef.forEach(async (doc) => {
+            // add a violation entry 
+            await db
+                .collection(`accounts/${accountId}/${Const_1.default.DB.TRADES}/${doc.id}/${Const_1.default.DB.VIOLATION}`)
+                .add({
+                type,
+                ...additionData,
+                date: Timestamp.fromDate(new Date()),
+            });
+            await db
+                .collection(`accounts/${accountId}/${Const_1.default.DB.TRADES}`).doc(doc.id).update({
+                violations: firestore_1.FieldValue.arrayUnion(type)
+            });
+        });
     }
 }
