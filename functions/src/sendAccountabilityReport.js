@@ -62,7 +62,6 @@ async function generateReport(accountId, userId, date) {
     (0, logger_1.debug)("trade data", JSON.stringify(trades, null, 2));
     let violationData = await getViolationsForDate(accountId, date);
     (0, logger_1.debug)("violation data", JSON.stringify(violationData, null, 2));
-    // let violationPerTicket = violationData.
     const templateHTML = handlebars_1.default.compile(email_1.default.REPORT1.HTML);
     const templateSUBJECT = handlebars_1.default.compile(email_1.default.REPORT1.SUBJECT);
     const templateTEXT = handlebars_1.default.compile(email_1.default.REPORT1.TEXT);
@@ -99,7 +98,6 @@ async function generateReport(accountId, userId, date) {
         return x;
     });
     /* eslint-enable */
-    (0, logger_1.debug)("violation data updated ", JSON.stringify(violationData, null, 2));
     const htmlParams = {
         balance: dailyBalance,
         date,
