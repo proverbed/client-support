@@ -606,3 +606,25 @@ function createViolation(db, accountId, type, additionData) {
         info("Successfully executed batch.");
     });
 }
+/**
+ * Create trade violation
+ *
+ * *account
+ *
+ * @param {object} db
+ * @param {string} accountId
+ * @param {string} type
+ * @param {object} additionData
+ */
+function createTradeViolation(db, accountId, type, additionData) {
+    const writeBatch = db.batch();
+    const createDocRef = db.collection(`accounts/${accountId}/violation`).doc();
+    writeBatch.create(createDocRef, {
+        ...additionData,
+        type: type,
+        date: Timestamp.fromDate(new Date()),
+    });
+    writeBatch.commit().then(() => {
+        info("Successfully executed batch.");
+    });
+}
