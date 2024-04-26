@@ -65,7 +65,7 @@ app.post("/sendMessage", async (req, res) => {
                 info(`exit open trade, open trade id: ${tradeData.id}`);
                 const activityData = await getOpenTradesActivityForTicketData(accountId, tradeData.id);
                 const violationData = await getOpenTradesViolationsForTicketData(accountId, tradeData.id);
-                info(`Violation data found: ${tradeData.id} violation data 1: ${JSON.stringify(violationData, null, 2)}`);
+                info(`Violation data found: ${tradeData.id} violation data: ${JSON.stringify(violationData, null, 2)}`);
                 await addTradeAndActivity(accountId, tradeData, activityData, violationData, obj);
                 // delete open trade for ticket id
                 await deleteOpenTrade(accountId, tradeData);
