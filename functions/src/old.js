@@ -1,8 +1,12 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.accountDailyBalance = exports.createTrade = exports.metrics = void 0;
 /* eslint-disable */
 // disable eslint for now, this is the legacy JS file I am currently migrating into TS. 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.accountDailyBalance = exports.createTrade = exports.metrics = void 0;
+const Const_1 = __importDefault(require("./globals/Const"));
 /** NEED TO FIX ESLINT IN THIS FILE, AND GO OVER TYPESCRIPT AGAIN, AND REMOVE ESLINT DISABLE. */
 const { onRequest } = require("firebase-functions/v2/https");
 const express = require("express");
@@ -60,7 +64,9 @@ app.post("/sendMessage", async (req, res) => {
                 const tradeData = exitOpenTradeForTicket[0];
                 info(`exit open trade, open trade id: ${tradeData.id}`);
                 const activityData = await getOpenTradesActivityForTicketData(accountId, tradeData.id);
-                await addTradeAndActivity(accountId, tradeData, activityData, obj);
+                const violationData = await getOpenTradesViolationsForTicketData(accountId, tradeData.id);
+                info(`Violation data found: ${tradeData.id} violation data 1: ${JSON.stringify(violationData, null, 2)}`);
+                await addTradeAndActivity(accountId, tradeData, activityData, violationData, obj);
                 // delete open trade for ticket id
                 await deleteOpenTrade(accountId, tradeData);
                 // update risk exposure
@@ -229,6 +235,22 @@ async function updateOpenTrade(accountId, openTradeId, tradeData) {
     });
     info(`update open trade, risk: ${tradeData.risk} sl: ${tradeData.sl} tp: ${tradeData.tp}`);
 }
+/**
+ * Add Open Trade Violation
+ *
+ * @param {string} accountId the account id
+ * @param {string} openTradeId the open trade id
+ * @param {object} violationData the violation object data
+ */
+async function addOpenTradeViolation(accountId, openTradeId, violationData) {
+    await db
+        .collection(`accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${openTradeId}/${Const_1.default.DB.VIOLATION}`)
+        .add({
+        ...violationData,
+        date: Timestamp.fromDate(new Date()),
+    });
+    info(`add open trade violation: ${JSON.stringify(violationData, null, 2)}`);
+}
 // /**
 //  * Add an open trade risk exposure entry to cloud firestore
 //  *
@@ -259,23 +281,20 @@ async function insertRiskExposureEntries(accountId) {
             maxRisk += doc.data().risk;
             ticketList.push(doc.data().ticket);
         });
-        // await addOpenTradeRiskExposure(accountId, {
-        //   risk: maxRisk,
-        //   numberTrades: numOpenTrades,
-        //   date: Timestamp.fromDate(new Date())
-        // });
         if (maxRisk > riskPerTrade) {
             // create violation
-            createViolation(db, accountId, "tooBig", {
+            const violationData = {
                 numberTrades: numOpenTrades,
                 risk: maxRisk,
                 riskPerTrade: riskPerTrade,
                 ticketList: ticketList.toString(),
-            });
+            };
+            createViolation(db, accountId, Const_1.default.VIOLATION.TOO_BIG, violationData);
+            createTradeViolation(db, accountId, Const_1.default.VIOLATION.TOO_BIG, violationData);
         }
         if (isNaN(maxRisk)) {
             // create violation
-            createViolation(db, accountId, "noStop", {
+            createViolation(db, accountId, Const_1.default.VIOLATION.NO_STOP, {
                 ticketList: ticketList.toString(),
             });
         }
@@ -364,7 +383,26 @@ async function getOpenTradesForTicketData(accountId, ticket) {
  * @return {list} list of open trade activity details
  */
 async function getOpenTradesActivityForTicketData(accountId, openTradeId) {
-    const accountRef = `accounts/${accountId}/openTrades/${openTradeId}/activity`;
+    const accountRef = `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${openTradeId}/${Const_1.default.DB.ACTIVITY}}`;
+    const snapshot = await db.collection(accountRef).get();
+    const idList = [];
+    snapshot.forEach((doc) => {
+        idList.push({
+            id: doc.id,
+            data: doc.data(),
+        });
+    });
+    return idList;
+}
+/**
+ * getOpenTradesViolationsForTicketData
+ *
+ * @param {string} accountId the account id
+ * @param {string} openTradeId the open trade id
+ * @return {list} list of open trade activity details
+ */
+async function getOpenTradesViolationsForTicketData(accountId, openTradeId) {
+    const accountRef = `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${openTradeId}/${Const_1.default.DB.VIOLATION}`;
     const snapshot = await db.collection(accountRef).get();
     const idList = [];
     snapshot.forEach((doc) => {
@@ -381,9 +419,10 @@ async function getOpenTradesActivityForTicketData(accountId, openTradeId) {
  * @param {string} accountId the account id
  * @param {object} tradeData trade data
  * @param {object} activityData activity data
+ * @param {object} violationData violation data
  * @param {object} exitTradeData exit trade data
  */
-async function addTradeAndActivity(accountId, tradeData, activityData, exitTradeData) {
+async function addTradeAndActivity(accountId, tradeData, activityData, violationData, exitTradeData) {
     const tradeRef = `accounts/${accountId}/trades`;
     const data = {
         ...tradeData.data,
@@ -393,13 +432,18 @@ async function addTradeAndActivity(accountId, tradeData, activityData, exitTrade
     const res = await db.collection(tradeRef).add(data);
     activityData.forEach(async (item) => {
         await db
-            .collection(`accounts/${accountId}/trades/${res.id}/activity`)
+            .collection(`accounts/${accountId}/trades/${res.id}/${Const_1.default.DB.ACTIVITY}`)
             .add(item.data);
     });
-    await db.collection(`accounts/${accountId}/trades/${res.id}/activity`).add({
+    await db.collection(`accounts/${accountId}/trades/${res.id}/${Const_1.default.DB.ACTIVITY}`).add({
         type: "exit",
         risk: tradeData.data.risk,
         date: Timestamp.fromDate(new Date()),
+    });
+    violationData.forEach(async (item) => {
+        await db
+            .collection(`accounts/${accountId}/trades/${res.id}/${Const_1.default.DB.VIOLATION}`)
+            .add(item.data);
     });
 }
 /**
@@ -409,9 +453,10 @@ async function addTradeAndActivity(accountId, tradeData, activityData, exitTrade
  * @param {object} tradeData trade data
  */
 async function deleteOpenTrade(accountId, tradeData) {
-    await deleteCollection(db, `accounts/${accountId}/openTrades/${tradeData.id}/activity`, 10);
+    await deleteCollection(db, `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${tradeData.id}/${Const_1.default.DB.ACTIVITY}`, 10);
+    await deleteCollection(db, `accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}/${tradeData.id}/${Const_1.default.DB.VIOLATION}`, 10);
     await db
-        .collection(`accounts/${accountId}/openTrades`)
+        .collection(`accounts/${accountId}/${Const_1.default.DB.OPEN_TRADES}`)
         .doc(tradeData.id)
         .delete();
 }
@@ -609,22 +654,34 @@ function createViolation(db, accountId, type, additionData) {
 /**
  * Create trade violation
  *
- * *account
- *
  * @param {object} db
  * @param {string} accountId
  * @param {string} type
  * @param {object} additionData
  */
-function createTradeViolation(db, accountId, type, additionData) {
-    const writeBatch = db.batch();
-    const createDocRef = db.collection(`accounts/${accountId}/violation`).doc();
-    writeBatch.create(createDocRef, {
-        ...additionData,
-        type: type,
-        date: Timestamp.fromDate(new Date()),
-    });
-    writeBatch.commit().then(() => {
-        info("Successfully executed batch.");
-    });
+async function createTradeViolation(db, accountId, type, additionData) {
+    let list = additionData.ticketList.split(',');
+    info(`createTradeViolation: list ${list}`);
+    for (let item of list) {
+        // query trade for the given ticket 
+        info(`createTradeViolation: Query trade details for ${item} ${type}`);
+        const tradeRef = await db
+            .collection(`accounts/${accountId}/openTrades`)
+            .where("ticket", "==", item)
+            .get();
+        if (tradeRef.empty) {
+            warn(`createTradeViolation: No matching documents for ${item} `);
+            return;
+        }
+        else {
+            tradeRef.forEach(async (doc) => {
+                info(`createTradeViolation: doc ${doc.id}, data: [${JSON.stringify(doc.data(), null, 2)}] adding`);
+                delete additionData.ticketList;
+                await addOpenTradeViolation(accountId, doc.id, {
+                    type,
+                    ...additionData
+                });
+            });
+        }
+    }
 }
