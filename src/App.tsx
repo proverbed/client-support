@@ -14,13 +14,13 @@ export function App() {
  
   return (
     <React.Fragment>
-      <Button onClick={openDrawer}>Open Drawer</Button>
-      <Drawer open={open} onClose={closeDrawer} className="p-4">
+      <Button onClick={openDrawer} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Open Drawer</Button>
+      <Drawer open={open} onClose={closeDrawer} className="p-4" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
         <div className="mb-6 flex items-center justify-between">
-          <Typography variant="h5" color="blue-gray">
+          <Typography variant="h5" color="blue-gray" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             Material Tailwind
           </Typography>
-          <IconButton variant="text" color="blue-gray" onClick={closeDrawer}>
+          <IconButton variant="text" color="blue-gray" onClick={closeDrawer} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -37,12 +37,12 @@ export function App() {
             </svg>
           </IconButton>
         </div>
-        <Typography color="gray" className="mb-8 pr-4 font-normal">
+        <Typography color="gray" className="mb-8 pr-4 font-normal" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
           Material Tailwind features multiple React and HTML components, all
           written with Tailwind CSS classes and Material Design guidelines.
         </Typography>
         <div className="flex gap-2">
-          <Button size="sm" variant="outlined">
+          <Button size="sm" variant="outlined" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             Documentation
           </Button>
           <Button size="sm">Get Started</Button>
@@ -51,5 +51,6 @@ export function App() {
     </React.Fragment>
   );
 }
+
 
 export default App; 
