@@ -26,4 +26,3 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLIENT_SUPPORT_CA5DC }}"
           expires: 7d
-          projectId: tradestats-web
