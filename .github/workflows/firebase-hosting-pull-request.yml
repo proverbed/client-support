@@ -12,7 +12,7 @@ jobs:
       - run: npm install
       - name: Build project ${{ env.GITHUB_HEAD_REF_SLUG }}
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLIENT_SUPPORT_CA5DC }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
           REACT_APP_BASEURL: ${{ secrets.REACT_APP_BASEURL }}
