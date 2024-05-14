@@ -15,7 +15,7 @@ jobs:
       - run: npm install
       - name: Build project ${{ env.GITHUB_HEAD_REF_SLUG }}
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLIENT_SUPPORT_CA5DC }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN }}
           REACT_APP_BASEURL: ${{ secrets.REACT_APP_BASEURL }}
@@ -27,5 +27,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLIENT_SUPPORT_CA5DC }}"
           channelId: live
