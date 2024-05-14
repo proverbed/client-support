@@ -45,7 +45,7 @@ export function App() {
           <Button size="sm" variant="outlined" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
             Documentation
           </Button>
-          <Button size="sm">Get Started</Button>
+          <Button size="sm" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>Get Started</Button>
         </div>
       </Drawer>
     </React.Fragment>
