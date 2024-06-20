@@ -23,8 +23,8 @@ export default withMT({
       },
     },
     backgroundImage: {
-      'hero-pattern': "url('src/assets/login.jpg')",
-      'sign-up': "url('src/assets/sign-up.jpg')",
+      'hero-pattern': "url('images/login.jpg')",
+      'sign-up': "url('images/sign-up.jpg')",
     }
   },
   plugins: [],
