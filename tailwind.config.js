@@ -24,7 +24,7 @@ export default withMT({
     },
     backgroundImage: {
       'hero-pattern': "url('login.jpg')",
-      'sign-up': "url('./sign-up.jpg')",
+      'sign-up': "url('sign-up.jpg')",
     }
   },
   plugins: [],
