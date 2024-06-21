@@ -41,14 +41,8 @@ function SignUp() {
       password: password,
     },
     onSubmit: async (values) => {
-      console.log('email', email, ' password ', password, values);
-      console.log('handle on submit formik', values);
 
       await createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-      })
       .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
