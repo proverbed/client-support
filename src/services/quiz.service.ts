@@ -5,7 +5,6 @@ import {
   getDocs,
   query,
   QueryDocumentSnapshot,
-  where,
 } from "firebase/firestore";
 import { db } from "../config/Firebase.ts";
 import {

@@ -134,6 +134,10 @@ const QuizComponent = () => {
     });
   }, [status, quizData]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="flex justify-between flex-row w-full border-b">
