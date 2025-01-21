@@ -9,8 +9,8 @@ import {
 import { db } from "../config/Firebase.ts";
 import {
   CollectionQuizDescription,
+  Quiz,
   QuizDescriptionProps,
-  QuizModel,
 } from "../dto/UserType.ts";
 
 const COLLECTION = "quiz";
@@ -35,8 +35,8 @@ export const getQuizDataById = (id: string) => {
   const q = query(
     collection(db, COLLECTION + "/" + id + "/quiz"),
   ).withConverter({
-    toFirestore: (data: QuizModel) => data,
-    fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as QuizModel,
+    toFirestore: (data: Quiz) => data,
+    fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as Quiz,
   });
   return getDocs(q);
 };

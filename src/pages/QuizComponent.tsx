@@ -5,9 +5,8 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import ProgressBar from "../components/ProgressBar";
 import { RxCross2 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa6";
-import Quiz, { Answer, QuizAnsweredMap } from "../store/Types";
+import Quiz, { Answer, AnswerSelected, QuizAnsweredMap, QuizDB } from "../store/Types";
 import { getQuizById, getQuizDataById } from "../services/quiz.service";
-import { QuizModel } from "../dto/UserType";
 
 const rankList: {
   [questionIndex: string]: { rank: string; description: string };
@@ -56,11 +55,11 @@ const QuizComponent = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  function setSelected(arr: Answer[], index: number) {
-    const arrCopy = [...arr].map((x) => {
-      x.selected = false;
-      return x;
-    });
+  function setSelected(arr: Answer[], index: number): AnswerSelected[] {
+    const arrCopy: AnswerSelected[] = [...arr].map(item => ({
+      selected: false,
+      ...item,
+    }));
     const quizAnswers = { ...quizAnswered };
     quizAnswers[qIndex] = true;
     setQuizAnswer(quizAnswers);
@@ -75,7 +74,7 @@ const QuizComponent = () => {
       setQuizDescription(doc.data()?.name);
 
       const allQuizQuerySnapshot = await getQuizDataById(id);
-      const quizDetails: QuizModel[] = allQuizQuerySnapshot.docs.map(
+      const quizDetails: QuizDB[] = allQuizQuerySnapshot.docs.map(
         (doc) => ({
           ...doc.data(),
         }),
@@ -113,7 +112,7 @@ const QuizComponent = () => {
     let count: number = 0;
     let score: number = 0;
     quizData.forEach((element: Quiz) => {
-      element.answer.forEach((x: Answer) => {
+      element.answer.forEach((x: AnswerSelected) => {
         if (x.selected && x.correct) {
           count++;
         }

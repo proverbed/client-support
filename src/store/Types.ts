@@ -6,6 +6,11 @@ export interface Info {
   export interface Answer {
     answer: string;
     correct: boolean;
+  }
+
+  export interface AnswerSelected {
+    answer: string;
+    correct: boolean;
     selected: boolean;
   }
   
@@ -15,9 +20,18 @@ export interface Info {
       description: string, 
       resourceLink?: string,
     };
-    answer: Answer[];
+    answer: AnswerSelected[];
   }
   
+  export interface QuizDB {
+    question: string;
+    explanation?: {
+      description: string, 
+      resourceLink?: string,
+    };
+    answer: Answer[];
+  }
+
   export interface QuizMap {
     [quizName: string]: {
       info: Info;
