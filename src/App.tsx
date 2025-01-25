@@ -8,6 +8,7 @@ import LogIn from "./pages/Login.tsx";
 import SignUp from "./pages/SignUp.tsx";
 import RootLayout from "./pages/Root.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import QuizComponent from "./pages/QuizComponent.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <HomePage /> },
+      {
+        path: "/quiz/:id",
+        element: <QuizComponent />,
+      },
       { path: "/dashboard", element: <Dashboard /> },
     ],
   },
